@@ -22,7 +22,7 @@ def load_data(path):
 @click.option("--clean_data", is_flag=True)
 @click.option('--preprocess_data', is_flag=True)
 @click.option('--embed_data', is_flag=True)
-def main(clean_data, preprocess_data):
+def main(clean_data, preprocess_data, embed_data):
 	# logging.getLogger().setLevel(logging.INFO) # TODO: setup logging
 
 	if clean_data:
@@ -40,6 +40,10 @@ def main(clean_data, preprocess_data):
 		dataset = preprocesser.tokenize(dataset)
 		# df is now two column ['text', 'tokens']
 		print(dataset.head(1))
+
+	if embed_data:
+		embedding = embedder.cv(dataset)
+		print(embedding)
 
 	return
 

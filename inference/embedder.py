@@ -1,8 +1,8 @@
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
 def cv(data):
-    count_vectorizer = CountVectorizer()
+	count_vectorizer = CountVectorizer()
+	corpus_data = data['text'].tolist()
+	embedding = count_vectorizer.fit_transform(corpus_data)
 
-    emb = count_vectorizer.fit_transform(data)
-
-    return emb, count_vectorizer
+	return embedding
