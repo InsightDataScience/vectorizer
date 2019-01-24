@@ -1,53 +1,39 @@
-import argparse
+import click
 import sys
 
 import logging
 
+import numpy as np
+import pandas as pd
+
 import clean
-import preprocess
+# import preprocess
 
-def main():
+DATA_PATH = 'data/raw/testdata.manual.2009.06.14.csv'
 
+def load_data(path):
+	dataset = pd.read_csv(path, header=None)
+	dataset.columns = ['text']
+	return dataset
+
+@click.command()
+@click.option("--clean_data", is_flag=True)
+@click.option('--preprocess_data', is_flag=True)
+def main(clean_data, preprocess_data):
 	logging.getLogger().setLevel(logging.INFO)
+	# logging.INFO('Cleaning input data')
+	if clean_data:
+		dataset = load_data(DATA_PATH)
+		print('before cleaning \n')
+		print(dataset.head(2))
+		dataset = clean.remove_URL(dataset, 'text')
+		dataset = clean.remove_special_characters(dataset, 'text')
+		dataset = clean.lowercase(dataset, 'text')
+		print('after cleaning \n')
+		print(dataset.head(2))		
 
-	if FLAGS.clean:
-		logging.INFO('Cleaning input data')
-		clean
-
-	if FLAGS.preprocess:
-		logging.INFO('Preprocessing data')
-
-	if FLAGS.embed:
-        logging.INFO('Embedding data and generating vector')
-
-	pass
+	return
 
 
 if __name__ == '__main__':
-  parser = argparse.ArgumentParser()
-  parser.add_argument(
-      '--clean',
-      default=False,
-      help='Train the model.',
-      action='store_true')
-  parser.add_argument(
-      '--preprocess',
-      default=False,
-      help='Evaluate the trained model.',
-      action='store_true')
-  parser.add_argument(
-      '--embed',
-      default=False,
-      help='Predict.',
-      action='store_true')
-  parser.add_argument(
-      '--inference_model_train',
-      default=False,
-      help='Predict.',
-      action='store_true')
-  parser.add_argument(
-      '--inferecnce_model_predict',
-      default=False,
-      help='Predict.',
-      action='store_true')
-  FLAGS, unparsed = parser.parse_known_args()
+	main()

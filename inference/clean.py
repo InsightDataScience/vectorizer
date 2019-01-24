@@ -1,16 +1,18 @@
+import click
 import pandas as pd
 import numpy as np
 
-def main():
-	# Initialize logger
-	LOG_FILENAME = 'case_automation.log'
-	logging.basicConfig(filename=LOG_FILENAME,
-                            filemode='a',
-                            format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
-                            datefmt='%H:%M:%S',
-                            level=logging.DEBUG)
+def remove_URL(df, text_field):
+	df[text_field] = df[text_field].str.replace(r"http\S+", "")
+	df[text_field] = df[text_field].str.replace(r"http", "")
+	return df
 
-	pass
+def remove_special_characters(df, text_field):
+	df[text_field] = df[text_field].str.replace(r"@\S+", "")
+	df[text_field] = df[text_field].str.replace(r"[^A-Za-z0-9(),!?@\'\`\"\_\n]", " ")
+	df[text_field] = df[text_field].str.replace(r"@", "at")
+	return df
 
-if __name__ == '__main__':
-    main()
+def lowercase(df, text_field):
+	df[text_field] = df[text_field].str.lower()
+	return df

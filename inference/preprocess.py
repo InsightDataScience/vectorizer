@@ -9,5 +9,12 @@ def main():
 
 	pass
 
+from nltk.tokenize import RegexpTokenizer
+
+def tokenize(df, text_field):
+	tokenizer = RegexpTokenizer(r'\w+')
+	df["tokens"] = df["text"].apply(tokenizer.tokenize)
+	return df
+
 if __name__ == '__main__':
     main()
