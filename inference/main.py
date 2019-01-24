@@ -7,7 +7,8 @@ import numpy as np
 import pandas as pd
 
 import cleaner
-# import preprocess
+import preprocesser
+import embedder
 
 DATA_PATH = 'data/raw/testdata.text_only.csv'
 
@@ -20,6 +21,7 @@ def load_data(path):
 @click.command()
 @click.option("--clean_data", is_flag=True)
 @click.option('--preprocess_data', is_flag=True)
+@click.option('--embed_data', is_flag=True)
 def main(clean_data, preprocess_data):
 	# logging.getLogger().setLevel(logging.INFO) # TODO: setup logging
 
@@ -33,6 +35,11 @@ def main(clean_data, preprocess_data):
 		dataset = cleaner.lowercase(dataset, 'text')
 		print('after cleaning \n')
 		print(dataset.head(2))
+
+	if preprocess_data:
+		dataset = preprocesser.tokenize(dataset)
+		# df is now two column ['text', 'tokens']
+		print(dataset.head(1))
 
 	return
 
