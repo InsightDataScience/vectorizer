@@ -14,6 +14,3 @@ def get_metrics(y_test, y_predicted):
     # true positives + true negatives/ total
     accuracy = accuracy_score(y_test, y_predicted)
     return accuracy, precision, recall, f1
-
-# accuracy, precision, recall, f1 = get_metrics(y_test, y_predicted_counts)
-# print("accuracy = %.3f, precision = %.3f, recall = %.3f, f1 = %.3f" % (accuracy, precision, recall, f1))
