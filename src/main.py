@@ -3,6 +3,7 @@ import logging
 import data
 import preprocess
 import utilities
+import ngram
 
 
 @click.command()
@@ -24,9 +25,11 @@ def main(input_filepath):
     log.info('Going to preprocess data')
     preprocessed_data = preprocess.PreprocessText(email_content).preprocessed_text
 
-    print(preprocessed_data)
-
     log.info('Successfully preprocessed data')
+
+    log.info('Starting to create Ngram datasets for model')
+
+    ngram.Ngram(preprocessed_data)
 
     quit()
 
@@ -35,10 +38,6 @@ def main(input_filepath):
     bi_dict = Counter()   # for keeping count of sentences of two words
     bi_prob_dict = defaultdict(list)           #for storing the probable  words for Bigram sentences
 
-    nlp = spacy.load('en_core_web_sm')
-
-    nlp.add_pipe(preprocess_text, name='preprocesser', after='tagger')
-    print(nlp.pipe_names)  # ['tagger', 'preprocesser','parser', 'ner']
 
     token_len = corpus.Corpus()
 

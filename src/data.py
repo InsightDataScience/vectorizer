@@ -2,11 +2,6 @@
 import logging
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
-import spacy
-from collections import defaultdict
-from nltk.util import ngrams
-from collections import Counter
-import corpus
 import pandas as pd
 
 
@@ -14,6 +9,7 @@ def read_csv(input_filepath):
     """Reads in CVS.
 
     TODO: Add reading in guard rails and properties. More specific exception?
+    TODO: When to split into test and training? Think about it and implement.
     """
     logging.info(f'Starting to read in raw CSV from {input_filepath}')
     try:

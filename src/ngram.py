@@ -1,17 +1,42 @@
 from collections import defaultdict
 import logging
+from nltk.util import ngrams
+from sklearn.feature_extraction.text import CountVectorizer
+import nltk
+from collections import Counter
 
 
-class Corpus:
-    def __init__(self, data):
-        self.unigram_counts = count_unigram(data)
-        self.total_words = len(self.unigram_counts)
-        self.bigram_dict = default_dict(int)
+class Ngram:
+    def __init__(self, preprocessed_dataframe):
+        self.log = logging.getLogger('Enron_email_analysis.ngram')
+        self.log.info('Starting to create ngram model inputs')
+        self.unigrams = self.ngram_generator(preprocessed_dataframe, 1)
+        self.word_in_document_count = self.word_in_document_counter(preprocessed_dataframe)
+        self.word_count = self.word_counter(Counter(), preprocessed_dataframe)
+        print(self.word_count)
 
-    def count_unigram(self, data, bi_dict, vocab_dict, nlp):
-        w1 = ''  # for storing the 3rd last word to be used for next token set
-        w2 = ''  # for storing the 2nd last word to be used for next token set
-        w3 = ''  # for storing the last word to be used for next token set
+    def ngram_generator(self, preprocessed_dataframe, n):
+        self.log.info(f'Creating {n} grams')
+        return ngrams(preprocessed_dataframe,n)
+
+    def word_in_document_counter(self, preprocessed_dataframe):
+
+        # Sci kit learn version below is an option
+        # I think the sci kit learn one saves more memory
+        #count_vectorizer = CountVectorizer()
+        #preprocessed_dataframe.apply(lambda row: count_vectorizer.fit_transform(row))
+
+        # NLTK version below. This is creating a word count per document.
+        return preprocessed_dataframe.apply(lambda row: nltk.FreqDist(row))
+
+    def word_counter(self, counter, preprocessed_dataframe):
+        # Because the data is stored as a list of lists of word, I need to iterate through them to be able to count.
+        for row in preprocessed_dataframe:
+            counter.update(row)
+        return counter
+
+    def count_unigram(self, preprocessed_dataframe, bi_dict, vocab_dict, nlp):
+
         token = []
         # total no. of words in the corpus
         word_len = 0
