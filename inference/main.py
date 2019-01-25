@@ -35,6 +35,9 @@ def load_labels(path):
 @click.option('--embed_data', is_flag=True)
 @click.option('--evaluate', is_flag=True)
 def main(clean_data, preprocess_data, embed_data, evaluate):
+	# this function is not generic enough, should be reformatted to fit
+	# general use cases
+
 	# logging.getLogger().setLevel(logging.INFO) # TODO: setup logging
 
 	if clean_data:
