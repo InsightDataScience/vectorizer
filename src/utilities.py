@@ -32,3 +32,19 @@ def logger():
     logger.addHandler(fh)
     logger.addHandler(ch)
     logger.info('Finished creating logger')
+
+
+def takeInput():
+    cond = False
+    # take input
+    while (cond == False):
+        sen = input('Enter the string\n')
+        # ? We may need to remove puncuation from the input
+        temp = sen.split()
+        if len(temp) < 3:
+            print("Please enter atleast 3 words !")
+        else:
+            cond = True
+            temp = temp[-3:]
+    sen = " ".join(temp)
+    return sen

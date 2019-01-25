@@ -5,7 +5,6 @@ import preprocess
 import utilities
 import ngram
 
-
 @click.command()
 @click.argument('input_filepath', type=click.Path(exists=True))
 def main(input_filepath):
@@ -29,30 +28,24 @@ def main(input_filepath):
 
     log.info('Starting to create Ngram datasets for model')
 
-    ngram.Ngram(preprocessed_data)
-
-    quit()
-
-    token_len = corpus.Corpus()
-
-    loadCorpus(input_filepath, bi_dict, vocab_dict, nlp)
-
-    param = [0.7,0.1,0.1,0.1]
-    #create bigram Probability Dictionary
-    findBigramProbAdd1(vocab_dict, bi_dict, bi_prob_dict)
-
-    # sort the probability dictionaries
-    sortProbWordDict(bi_prob_dict)
+    saved_ngram = ngram.Ngram(preprocessed_data)
 
     #take user input
-    input_sen = takeInput()
+    input_sen = utilities.takeInput()
 
     ### PREDICTION
-    #choose most probable words for prediction
-    word_choice = chooseWords(input_sen, bi_prob_dict)
-    prediction = doInterpolatedPredictionAdd1(input_sen, bi_dict, vocab_dict,token_len, word_choice, param)
-    print('Word Prediction:',prediction)
+    predicted_word = predict_next_word(input_sen, saved_ngram.bigram_probability)
 
+    #choose most probable words for prediction
+    print('Word Prediction:', predicted_word)
+
+def predict_next_word(sentence, bigram_probability):
+    token = sentence.split()
+    if token[-1] in bigram_probability:
+        token_probabilities = bigram_probability[token[-1]]
+        sorted_probabilities = sorted(token_probabilities, key=lambda x: x[0], reverse=True)
+        print(sorted_probabilities)
+        return sorted_probabilities[0]
 
 if __name__ == "__main__":
     logging.info("Going to run main function")

@@ -1,7 +1,6 @@
-from collections import defaultdict
 import logging
 from nltk.util import ngrams
-from sklearn.feature_extraction.text import CountVectorizer
+import ngram
 import nltk
 from collections import Counter
 
@@ -11,6 +10,7 @@ class Ngram:
         self.log = logging.getLogger('Enron_email_analysis.ngram')
         self.log.info('Starting to create ngram model inputs')
 
+        # Do we need this? Keeping for now, but delete in future if not.
         self.word_in_document_count = self.word_in_document_counter(preprocessed_dataframe)
 
         # TODO: You could try to just update unigram_counter and bigram_counter directly without passing it to the function
@@ -21,10 +21,7 @@ class Ngram:
         self.bigrams, self.bigram_count = self.ngram_generator_and_counter(preprocessed_dataframe, 2, bigram_counter)
 
         self.bigram_probability = Counter()
-        print(self.bigram_probability)
         self.ngram_probability(self.unigram_count, self.bigram_count, self.bigram_probability)
-        print(self.bigram_probability)
-
 
     def word_in_document_counter(self, preprocessed_dataframe):
 
@@ -89,3 +86,5 @@ class Ngram:
             # the unigram sentence is present but the probable word is missing,then add it
             else:
                 ngram_probability[unigram_token].append([probability, ngram_token[-1]])
+
+

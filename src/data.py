@@ -21,45 +21,6 @@ def read_csv(input_filepath):
     except Exception:
         logging.error(f'Failed to read in raw CSV from {input_filepath}')
 
-def sortProbWordDict(bi_prob_dict):
-    #sort bigram dict
-    for key in bi_prob_dict:
-        if len(bi_prob_dict[key])>1:
-            bi_prob_dict[key] = sorted(bi_prob_dict[key],reverse = True)
-
-
-def add_words_to_vocab(doc, vocab_dict):
-    # add new unique words in doc to the vocaulary set if available
-    for word in doc:
-        if word not in vocab_dict:
-            vocab_dict[word] = 1
-        else:
-            vocab_dict[word] += 1
-
-
-def chooseWords(sen, bi_prob_dict):
-    word_choice = []
-    token = sen.split()
-    if token[-1] in bi_prob_dict:
-        word_choice += bi_prob_dict[token[-1]][:1]
-        # print('Word Choice bi dict')
-
-    return word_choice
-
-def takeInput():
-    cond = False
-    #take input
-    while(cond == False):
-        sen = input('Enter the string\n')
-        # ? We may need to remove puncuation from the input
-        temp = sen.split()
-        if len(temp) < 3:
-            print("Please enter atleast 3 words !")
-        else:
-            cond = True
-            temp = temp[-3:]
-    sen = " ".join(temp)
-    return sen
 
 
 def doInterpolatedPredictionAdd1(sen, bi_dict, vocab_dict, token_len, word_choice, param):
