@@ -10,6 +10,8 @@ from sklearn.model_selection import train_test_split
 import cleaner
 import preprocesser
 import embedder
+import models
+import analyzer
 
 # current sample data setup
 # should be made generic so users can specify file path
@@ -23,7 +25,7 @@ def load_data(path):
 	return dataset
 
 def load_labels(path):
-	labels = pd.read_csv(path, indx_col=0)
+	labels = pd.read_csv(path, index_col=0)
 	labels.columns = ['labels']
 	return labels
 
@@ -52,6 +54,8 @@ def main(clean_data, preprocess_data, embed_data, evaluate):
 		print(dataset.head(1))
 
 	if evaluate:
+		labels = load_labels(LABEL_PATH)
+
 		list_corpus = dataset['text'].tolist()
 		list_labels = labels['labels'].tolist()
 
@@ -60,8 +64,14 @@ def main(clean_data, preprocess_data, embed_data, evaluate):
 		test_size=0.2,
 		random_state=40)
 
-		X_train_emb = embedder.cv(X_train)
-		X_test_emb = embedder.cv(X_test)
+		X_train_emb, count_vectorizer = embedder.cv(X_train)
+		X_test_emb = count_vectorizer.transform(X_test)
+
+		y_predict = models.predict(X_train_emb, y_train, X_test_emb)
+
+		accuracy, precision, recall, f1 = analyzer.get_metrics(y_test, y_predict)
+		print("accuracy = %.3f, precision = %.3f, recall = %.3f, f1 = %.3f"
+		% (accuracy, precision, recall, f1))
 
 	else:
 		if embed_data:

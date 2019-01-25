@@ -4,4 +4,4 @@ def cv(data):
 	count_vectorizer = CountVectorizer()
 	embedding = count_vectorizer.fit_transform(data)
 
-	return embedding
+	return embedding, count_vectorizer
