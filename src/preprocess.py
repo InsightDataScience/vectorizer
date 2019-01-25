@@ -6,9 +6,12 @@ import utilities
 class PreprocessText():
     def __init__(self, dataframe):
         # TODO Do we want to assume this takes in a dataframe?
-        self.log = logging.getLogger('Enron_email_analysis.preprocess')
-        self.preprocessed_text = self.preprocess(dataframe)
 
+        self.log = logging.getLogger('Enron_email_analysis.preprocess')
+        self.log.info('Starting to preprocess text data')
+        self.preprocessed_text = self.preprocess(dataframe) # Returns dataframe
+        self.log.info('Successfully preprocessed text data')
+        self.log.info(f'Sample of preprocessed text data: {self.preprocessed_text.head()}')
 
     def preprocess(self, dataframe):
         # TODO: Find a way to run these all at once. Doing these individually is inefficient.

@@ -22,13 +22,11 @@ def main(input_filepath):
     email_content = email_data['content']
 
     log.info('Going to preprocess data')
-    preprocessed_data = preprocess.PreprocessText(email_content)
+    preprocessed_data = preprocess.PreprocessText(email_content).preprocessed_text
 
     print(preprocessed_data)
 
-    log.info('Successfully preprocessed data and printing below')
-
-    print(data)
+    log.info('Successfully preprocessed data')
 
     quit()
 
