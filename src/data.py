@@ -21,32 +21,6 @@ def read_csv(input_filepath):
     except Exception:
         logging.error(f'Failed to read in raw CSV from {input_filepath}')
 
-def findBigramProbAdd1(vocab_dict, bi_dict, bi_prob_dict):
-
-    V = len(vocab_dict)
-
-    # create a dictionary of probable words with their probabilities for bigram probabilites
-    for bi in bi_dict:
-        # unigram for key
-        unigram = bi[0]
-
-        # find the probability
-        # add 1 smoothing has been used
-        prob = (bi_dict[bi] + 1) / (vocab_dict[unigram] + V)
-
-        # bi_prob_dict is a dict of list
-        # if the unigram sentence is not present in the Dictionary then add it
-        if unigram not in bi_prob_dict:
-            bi_prob_dict[unigram] = []
-            bi_prob_dict[unigram].append([prob, bi[-1]])
-        # the unigram sentence is present but the probable word is missing,then add it
-        else:
-            bi_prob_dict[unigram].append([prob, bi[-1]])
-
-    prob = None
-    bi_token = None
-    unigram = None
-
 def sortProbWordDict(bi_prob_dict):
     #sort bigram dict
     for key in bi_prob_dict:

@@ -33,12 +33,6 @@ def main(input_filepath):
 
     quit()
 
-    #variable declaration
-    vocab_dict = defaultdict(int)          #for storing the different words with their frequencies
-    bi_dict = Counter()   # for keeping count of sentences of two words
-    bi_prob_dict = defaultdict(list)           #for storing the probable  words for Bigram sentences
-
-
     token_len = corpus.Corpus()
 
     loadCorpus(input_filepath, bi_dict, vocab_dict, nlp)

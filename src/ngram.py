@@ -13,11 +13,17 @@ class Ngram:
 
         self.word_in_document_count = self.word_in_document_counter(preprocessed_dataframe)
 
+        # TODO: You could try to just update unigram_counter and bigram_counter directly without passing it to the function
+        # and returning the value too. It has been initialized so I think you can update and access it directly.
         unigram_counter = Counter()
         self.unigrams, self.unigram_count = self.ngram_generator_and_counter(preprocessed_dataframe, 1, unigram_counter)
         bigram_counter = Counter()
         self.bigrams, self.bigram_count = self.ngram_generator_and_counter(preprocessed_dataframe, 2, bigram_counter)
-        print(self.bigram_count)
+
+        self.bigram_probability = Counter()
+        print(self.bigram_probability)
+        self.ngram_probability(self.unigram_count, self.bigram_count, self.bigram_probability)
+        print(self.bigram_probability)
 
 
     def word_in_document_counter(self, preprocessed_dataframe):
@@ -61,3 +67,25 @@ class Ngram:
                 counter.update(x)
         return list_of_ngrams, counter
 
+    def ngram_probability(self, unigram_count, ngram_count, ngram_probability):
+        """for creating prob dict for bigram probabilities
+        creates dict for storing probable words with their probabilities for a trigram sentence
+        ADD 1 Smoothing used"""
+
+        unique_word_count = len(unigram_count)
+
+        # create a dictionary of probable words with their probabilities for bigram probabilites
+        for ngram_token in ngram_count:
+            # unigram for key
+            unigram_token = ngram_token[0]
+
+            # find the probability and add 1 smoothing has been used
+            probability = (ngram_count[ngram_token] + 1) / (unigram_count[unigram_token] + unique_word_count)
+
+            # bi_prob_dict is a dict of list and if the unigram sentence is not present in the Dictionary then add it
+            if unigram_token not in ngram_probability:
+                ngram_probability[unigram_token] = []
+                ngram_probability[unigram_token].append([probability, ngram_token[-1]])
+            # the unigram sentence is present but the probable word is missing,then add it
+            else:
+                ngram_probability[unigram_token].append([probability, ngram_token[-1]])
