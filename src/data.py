@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import click
 import logging
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
@@ -7,91 +6,24 @@ import spacy
 from collections import defaultdict
 from nltk.util import ngrams
 from collections import Counter
+import corpus
+import pandas as pd
 
 
+def read_csv(input_filepath):
+    """Reads in CVS.
 
-
-@click.command()
-@click.argument('input_filepath', type=click.Path(exists=True))
-@click.argument('output_filepath', type=click.Path())
-def main(input_filepath, output_filepath):
-    """ Runs data processing scripts to turn raw data from (../raw) into
-        cleaned data ready to be analyzed (saved in ../processed).
+    TODO: Add reading in guard rails and properties. More specific exception?
     """
-    logger = logging.getLogger(__name__)
-    logger.info('making final data set from raw data')
-
-    #variable declaration
-    vocab_dict = defaultdict(int)          #for storing the different words with their frequencies
-    bi_dict = Counter()   # for keeping count of sentences of two words
-    bi_prob_dict = defaultdict(list)           #for storing the probable  words for Bigram sentences
-
-    nlp = spacy.load('en_core_web_sm')
-
-    nlp.add_pipe(preprocess_text, name='preprocesser', after='tagger')
-    print(nlp.pipe_names)  # ['tagger', 'preprocesser','parser', 'ner']
-
-    token_len = loadCorpus(input_filepath, bi_dict, vocab_dict, nlp)
-
-    param = [0.7,0.1,0.1,0.1]
-    #create bigram Probability Dictionary
-    findBigramProbAdd1(vocab_dict, bi_dict, bi_prob_dict)
-
-    # sort the probability dictionaries
-    sortProbWordDict(bi_prob_dict)
-
-    #take user input
-    input_sen = takeInput()
-
-    ### PREDICTION
-    #choose most probable words for prediction
-    word_choice = chooseWords(input_sen, bi_prob_dict)
-    prediction = doInterpolatedPredictionAdd1(input_sen, bi_dict, vocab_dict,token_len, word_choice, param)
-    print('Word Prediction:',prediction)
-
-
-def preprocess_text(doc):
-    """ Preprocess text. Tokenize, lowercase, and remove punctuation and stopwords and new lines """
-    nlp = spacy.load('en_core_web_sm') # ? NOT SURE IF I SHOULD BE REWRITING THIS HERE
-    # ? REMOVE DATES TIMES AND EMAILS
-    # CCONSIDER PENN TREE BANK AND WIKI DATASET
-    stopwords = spacy.lang.en.STOP_WORDS
-    # Tokenize, remove punctuation, symbols (#), stopwords
-    doc = [tok.text for tok in doc if (tok.text not in stopwords and tok.pos_ != "PUNCT" and tok.pos_ != "SYM" and tok.pos_ != "X" and tok.text != "\n" and tok.text.strip() != '')]
-    # Lowercase tokens
-    doc = [tok.lower() for tok in doc]
-    doc = ' '.join(doc)
-    return nlp.make_doc(doc)
-
-def loadCorpus(file_path, bi_dict, vocab_dict, nlp):
-    w1 = ''  # for storing the 3rd last word to be used for next token set
-    w2 = ''  # for storing the 2nd last word to be used for next token set
-    w3 = ''  # for storing the last word to be used for next token set
-    token = []
-    # total no. of words in the corpus
-    word_len = 0
-
-    # open the corpus file and read it line by line
-    # read in better
-    spacy_tokenized_emails = []
-    corpus_size = 0
-    with open(file_path, 'r') as file:
-        for line in file:
-            line = line.strip() # checking to see if line is blank
-            if not line:  # line is blank
-                continue
-            line_tokens = []
-            doc = nlp(line)
-            for token in doc:
-                line_tokens.append(token.text)
-            spacy_tokenized_emails.append(line_tokens)
-            # ? missing relationships of words across lines
-            corpus_size = corpus_size + len(line_tokens)
-
-            add_words_to_vocab(line_tokens, vocab_dict)
-
-            bi_dict.update(ngrams(line_tokens, 2))
-    return len(vocab_dict)
+    logging.info(f'Starting to read in raw CSV from {input_filepath}')
+    try:
+        dataframe = pd.read_csv(input_filepath)
+        logging.info('Successfully finished reading raw CSV')
+        logging.info(f'Read in dataframe of shape: {dataframe.shape}\n')
+        logging.info(f'Sample of dataframe: {dataframe.head()}\n')
+        return dataframe
+    except Exception:
+        logging.error(f'Failed to read in raw CSV from {input_filepath}')
 
 def findBigramProbAdd1(vocab_dict, bi_dict, bi_prob_dict):
 
