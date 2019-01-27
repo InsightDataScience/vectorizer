@@ -40,11 +40,13 @@ def takeInput():
     while (cond == False):
         sen = input('Enter the string\n')
         # ? We may need to remove puncuation from the input
-        temp = sen.split()
-        if len(temp) < 3:
-            print("Please enter atleast 3 words !")
-        else:
-            cond = True
-            temp = temp[-3:]
-    sen = " ".join(temp)
-    return sen
+        before_and_after_blank = sen.split("_")
+        print(before_and_after_blank)
+        before_blank_tokens = before_and_after_blank[0].split()[-3:]
+        print(before_blank_tokens)
+        after_blank_tokens = before_and_after_blank[1].split()[:3]
+        print(after_blank_tokens)
+        if len(before_blank_tokens) < 3 or len(after_blank_tokens):
+            print("Please enter at least 3 words before and after the blank!")
+
+    return before_blank_tokens, after_blank_tokens

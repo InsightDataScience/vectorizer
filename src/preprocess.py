@@ -24,20 +24,26 @@ class PreprocessText():
         # TODO: Make all quotes same type.
 
         self.log.info("In preprocess function.")
-        dataframe1 = self.lowercase(dataframe)
-        dataframe2 = self.remove_special_characters(dataframe1)
-        self.remove_stop_words(dataframe2) # Doesn't return anything for now
-        dataframe3 = self.remove_website_links(dataframe2)
-        dataframe4 = self.tokenize(dataframe3)
+        dataframe1 = self.remove_nan(dataframe)
+        dataframe2 = self.lowercase(dataframe1)
+        dataframe3 = self.remove_special_characters(dataframe2)
+        self.remove_stop_words(dataframe3) # Doesn't return anything for now
+        dataframe4 = self.remove_website_links(dataframe3)
+        dataframe5 = self.tokenize(dataframe4)
 
         self.log.info(f"Sample of preprocessed data: {dataframe4.head()}")
 
-        return dataframe4
+        return dataframe5
+
+    def remove_nan(self, dataframe):
+        """Pass in a dataframe to remove NAN from those columns."""
+        return dataframe.dropna()
 
     def lowercase(self, dataframe):
         logging.info("Converting dataframe to lowercase")
         lowercase_dataframe = dataframe.apply(lambda x: x.lower())
         return lowercase_dataframe
+
 
     def remove_special_characters(self, dataframe):
         self.log.info("Removing special characters from dataframe")

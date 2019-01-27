@@ -30,22 +30,29 @@ def main(input_filepath):
 
     saved_ngram = ngram.Ngram(preprocessed_data)
 
-    #take user input
-    input_sen = utilities.takeInput()
+    while True:
+        #take user input
+        before_blank_tokens, after_blank_tokens = utilities.takeInput()
+        print(f'Before blank words: {before_blank_tokens}')
+        print(f'Before blank words: {after_blank_tokens}')
 
-    ### PREDICTION
-    predicted_word = predict_next_word(input_sen, saved_ngram.bigram_probability)
+        ### PREDICTION
+        predicted_word = predict_next_word_forward(before_blank_tokens, saved_ngram.bigram_probability)
 
-    #choose most probable words for prediction
-    print('Word Prediction:', predicted_word)
+        #choose most probable words for prediction
+        print('Word Prediction:', predicted_word)
 
-def predict_next_word(sentence, bigram_probability):
-    token = sentence.split()
-    if token[-1] in bigram_probability:
-        token_probabilities = bigram_probability[token[-1]]
+
+def predict_next_word_forward(before_blank_words, bigram_probability):
+    if before_blank_words[-1] in bigram_probability:
+        token_probabilities = bigram_probability[before_blank_words[-1]]
         sorted_probabilities = sorted(token_probabilities, key=lambda x: x[0], reverse=True)
-        print(sorted_probabilities)
+        print(sorted_probabilities[:10])
         return sorted_probabilities[0]
+
+def predict_next_word_backward(after_blank_tokens, bigram_probability):
+    # TODO
+    return None
 
 if __name__ == "__main__":
     logging.info("Going to run main function")

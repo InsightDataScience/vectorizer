@@ -17,9 +17,10 @@ class Ngram:
         # and returning the value too. It has been initialized so I think you can update and access it directly.
         unigram_counter = Counter()
         self.unigrams, self.unigram_count = self.ngram_generator_and_counter(preprocessed_dataframe, 1, unigram_counter)
+        self.log.info(f'unigram count: {self.unigram_count}')
         bigram_counter = Counter()
         self.bigrams, self.bigram_count = self.ngram_generator_and_counter(preprocessed_dataframe, 2, bigram_counter)
-
+        self.log.info(f'bigram count: {self.bigram_count}')
         self.bigram_probability = Counter()
         self.ngram_probability(self.unigram_count, self.bigram_count, self.bigram_probability)
 
