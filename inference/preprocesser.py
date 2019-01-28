@@ -16,7 +16,7 @@ def keras_tokenizer(df):
 
 	max_length = get_max_length(encoded_docs)
 	padded_docs = pad_sequences(encoded_docs, maxlen=max_length, padding='post')
-	return padded_docs
+	return padded_docs, t
 
 def get_max_length(docs)
 	sentence_lengths = []
