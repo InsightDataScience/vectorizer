@@ -5,13 +5,8 @@ import utilities
 
 class PreprocessText():
     def __init__(self, dataframe):
-        # TODO Do we want to assume this takes in a dataframe?
-
         self.log = logging.getLogger('Enron_email_analysis.preprocess')
-        self.log.info('Starting to preprocess text data')
         self.preprocessed_text = self.preprocess(dataframe) # Returns dataframe
-        self.log.info('Successfully preprocessed text data')
-        self.log.info(f'Sample of preprocessed text data: {self.preprocessed_text.head()}')
 
     def preprocess(self, dataframe):
         # TODO: Find a way to run these all at once. Doing these individually is inefficient.
@@ -21,9 +16,8 @@ class PreprocessText():
         # TODO: These functions still need to be fully tested.
         # TODO: Add try excepts to all functions to be able to tell what fails.
         # TODO: Add logging saying each function succeeded if it did.
-        # TODO: Make all quotes same type.
 
-        self.log.info("In preprocess function.")
+        self.log.info('Starting to pre-process text data.')
 
         dataframe1 = self.remove_nan(dataframe)
         dataframe2 = self.lowercase(dataframe1)
@@ -39,7 +33,7 @@ class PreprocessText():
         self.remove_stop_words(dataframe7) # Doesn't return anything for now
         dataframe8 = self.tokenize(dataframe7)
 
-        self.log.info(f"Sample of preprocessed data: {dataframe4.head()}")
+        self.log.info(f'Successfully finished pre-processing text data.')
 
         return dataframe8
 
@@ -48,25 +42,35 @@ class PreprocessText():
         return dataframe.dropna()
 
     def lowercase(self, dataframe):
-        logging.info("Converting dataframe to lowercase")
+        logging.info('Converting text data to lowercase')
         lowercase_dataframe = dataframe.str.lower()
         return lowercase_dataframe
 
     def remove_whitespace(self, dataframe):
-        self.log.info("Removing whitespace from dataframe")
+        self.log.info('Removing whitespace from text data')
         # replace more than 1 space with 1 space
         merged_spaces = dataframe.str.replace(r"\s\s+", ' ', regex=True)
         # delete beginning and trailing spaces
         trimmed_spaces = merged_spaces.apply(lambda x: x.strip())
         return trimmed_spaces
 
+    def remove_emails(self, dataframe):
+        self.log.info('Removing emails from text data')
+        no_emails = dataframe.str.replace('\S*@\S*\s?', '')
+        return no_emails
+
+    def remove_website_links(self, dataframe):
+        self.log.info('Removing website links from text data')
+        no_website_links = dataframe.str.replace('http\S+', '')
+        return no_website_links
+
     def remove_special_characters(self, dataframe):
-        self.log.info("Removing special characters from dataframe")
+        self.log.info('Removing special characters from text data')
         no_special_characters = dataframe.replace(r'[^A-Za-z0-9 ]+', '', regex=True)
         return no_special_characters
 
     def remove_numbers(self, dataframe):
-        self.log.info("Removing numbers from dataframe")
+        self.log.info('Removing numbers from text data')
         no_numbers = dataframe.str.replace('\d+', '')
         return no_numbers
 
@@ -74,19 +78,10 @@ class PreprocessText():
         # TODO: An option to pass in a custom list of stopwords would be cool.
         set(stopwords.words('english'))
 
-    def remove_website_links(self, dataframe):
-        self.log.info("Removing website links from dataframe")
-        no_website_links = dataframe.replace(r"http\S+", "")
-        return no_website_links
-
     def tokenize(self, dataframe):
         tokenized_dataframe = dataframe.apply(lambda row: word_tokenize(row))
         return tokenized_dataframe
 
-    def remove_emails(self, dataframe):
-        no_emails = dataframe.replace(r"\S*@\S*\s?", "")
-        return no_emails
-
     def expand_contractions(self, dataframe):
-        # TODO: Not a priority right now. Come back to it later.
+        # TODO: Not a priority right now. Come back to this later.
         return dataframe

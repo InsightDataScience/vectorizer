@@ -8,7 +8,7 @@ from collections import Counter
 class Ngram:
     def __init__(self, preprocessed_dataframe):
         self.log = logging.getLogger('Enron_email_analysis.ngram')
-        self.log.info('Starting to create ngram model inputs')
+        self.log.info('Starting to create ngram model inputs.')
 
         # Do we need this? Keeping for now, but delete in future if not.
         self.word_in_document_count = self.word_in_document_counter(preprocessed_dataframe)
@@ -17,18 +17,18 @@ class Ngram:
         # and returning the value too. It has been initialized so I think you can update and access it directly.
         unigram_counter = Counter()
         self.unigrams, self.unigram_count = self.ngram_generator_and_counter(preprocessed_dataframe, 1, unigram_counter)
-        self.log.info(f'unigram count: {self.unigram_count}')
+        self.log.info(f'Unigram count example: {list(self.unigram_count)[:1]}')
         bigram_counter = Counter()
         self.bigrams, self.bigram_count = self.ngram_generator_and_counter(preprocessed_dataframe, 2, bigram_counter)
-        self.log.info(f'bigram count: {self.bigram_count}')
+        self.log.info(f'Bigram count: {list(self.bigram_count)[:1]}')
 
         self.bigram_forward_probability = Counter()
         self.ngram_probability(self.unigram_count, self.bigram_count, self.bigram_forward_probability, 'forward')
 
         self.bigram_backward_probability = Counter()
         self.ngram_probability(self.unigram_count, self.bigram_count, self.bigram_backward_probability, 'backward')
-        print(f"Forward bigram probability counter: {self.bigram_forward_probability}")
-        print(f"Backward bigram probability counter: {self.bigram_backward_probability}")
+        print(f'Forward bigram probability example: {self.bigram_forward_probability.most_common(3)}')
+        print(f'Backward bigram probability example: {self.bigram_backward_probability.most_common(3)}')
 
 
     def word_in_document_counter(self, preprocessed_dataframe):
@@ -40,16 +40,6 @@ class Ngram:
 
         # NLTK version below. This is creating a word count per document.
         return preprocessed_dataframe.apply(lambda row: nltk.FreqDist(row))
-
-    def ngram_counter(self, counter, ngram, n):
-        if n>1:
-            for doc in ngram:
-                print("this part doesn't work still")
-                counter.update(doc)
-        for doc in ngram:
-            for word in doc:
-                counter.update(word)
-        return counter
 
     def ngram_generator_and_counter(self, preprocessed_dataframe, n, counter):
         # TODO: Explain logic well here. It is a little confusing.
@@ -77,7 +67,7 @@ class Ngram:
         creates dict for storing probable words with their probabilities for a trigram sentence
         ADD 1 Smoothing used"""
 
-        print("in ngram probability functoin")
+        logging.info(f'Calculating ngram probabilities in the {direction} direction')
         unique_word_count = len(unigram_count)
         # create a dictionary of probable words with their probabilities for bigram probabilites
         for ngram_token in ngram_count:
