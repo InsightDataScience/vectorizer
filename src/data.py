@@ -3,7 +3,28 @@ import logging
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
 import pandas as pd
+import boto3
+from sklearn.model_selection import train_test_split
 
+boto3.set_stream_logger('boto3', logging.INFO)
+#client = boto3.client('s3', aws_access_key_id='AKIAISJAQSB7RJADVFHQ', aws_secret_access_key='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') # Low-level functional API
+client = boto3.client('s3') # Low-level functional API
+
+
+resource = boto3.resource('s3') # High-level object-oriented API
+bucket = resource.Bucket('pujaa-rajan-enron-email-data') # Subsitute this for your s3 bucket name.
+
+def get_data_from_s3():
+    s3_file_data = client.get_object(Bucket='pujaa-rajan-enron-email-data', Key='enron_emails.csv')
+    print("connecting to s3 ", s3_file_data)
+    bucket = 'pujaa-rajan-enron-email-data'  # Or whatever you called your bucket
+    data_key = 'enron_emails.csv'  # Where the file is within your bucket
+    data_location = 's3://{}/{}'.format(bucket, data_key)
+    print("reading in data")
+    df = pd.read_csv(data_location)
+    print(df.head())
+
+    return df.head()
 
 def read_csv(input_filepath):
     """Reads in CVS.
@@ -21,6 +42,9 @@ def read_csv(input_filepath):
     except Exception:
         logging.error(f'Failed to read in raw CSV from {input_filepath}')
 
+def train_test_data(dataframe):
+    training_emails, testing_emails = train_test_split(dataframe, test_size=.2, train_size=.8, shuffle=True)
+    return training_emails, testing_emails
 
 
 def doInterpolatedPredictionAdd1(sen, bi_dict, vocab_dict, token_len, word_choice, param):
