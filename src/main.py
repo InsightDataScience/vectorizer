@@ -18,9 +18,10 @@ def main(input_filepath):
     log.info('Going to read in Enron email data')
 
     email_data = data.get_data_from_s3()
+
     exit()
 
-    #email_data = data.read_csv(input_filepath)
+    #email_data = data.read_data_from_csv(input_filepath)
 
     log.info('Extracting only email content')
     email_content = email_data['content']

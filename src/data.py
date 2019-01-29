@@ -6,23 +6,23 @@ import pandas as pd
 import boto3
 from sklearn.model_selection import train_test_split
 
-boto3.set_stream_logger('boto3', logging.INFO)
-#client = boto3.client('s3', aws_access_key_id='AKIAISJAQSB7RJADVFHQ', aws_secret_access_key='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') # Low-level functional API
-client = boto3.client('s3') # Low-level functional API
 
-
-resource = boto3.resource('s3') # High-level object-oriented API
-bucket = resource.Bucket('pujaa-rajan-enron-email-data') # Subsitute this for your s3 bucket name.
 
 def get_data_from_s3():
-    s3_file_data = client.get_object(Bucket='pujaa-rajan-enron-email-data', Key='enron_emails.csv')
-    print("connecting to s3 ", s3_file_data)
-    bucket = 'pujaa-rajan-enron-email-data'  # Or whatever you called your bucket
-    data_key = 'enron_emails.csv'  # Where the file is within your bucket
-    data_location = 's3://{}/{}'.format(bucket, data_key)
+    logging.info('Starting to connect to s3')
+
+    # Old working S3 Code - will delete in next commit
+    #boto3.set_stream_logger('boto3', logging.INFO)
+    #client = boto3.client('s3')  # Low-level functional API
+    #resource = boto3.resource('s3')  # High-level object-oriented API
+    #bucket = resource.Bucket('pujaa-rajan-enron-email-data')  # Subsitute this for your s3 bucket name.
+    #s3_file_data = client.get_object(Bucket='pujaa-rajan-enron-email-data', Key='small_enron_sample.csv')
+    #print("connecting to s3 ", s3_file_data)
+
+    data_location = 's3://pujaa-rajan-enron-email-data/small_enron_sample.csv'
     print("reading in data")
     df = pd.read_csv(data_location)
-    print(df.head())
+    print(df['content'].head())
 
     return df.head()
 
