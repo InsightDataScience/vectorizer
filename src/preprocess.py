@@ -27,20 +27,21 @@ class PreprocessText():
 
         dataframe1 = self.remove_nan(dataframe)
         dataframe2 = self.lowercase(dataframe1)
+
         dataframe3 = self.remove_whitespace(dataframe2)
 
         # Remove emails and websites before removing special characters
-        dataframe4 = self.remove_emails(self, dataframe3)
-        dataframe5 = self.remove_website_links(self, dataframe4)
+        dataframe4 = self.remove_emails(dataframe3)
+        dataframe5 = self.remove_website_links(dataframe4)
 
         dataframe6 = self.remove_special_characters(dataframe5)
-        dataframe7 - self.remove_numbers(dataframe6)
-        self.remove_stop_words(dataframe8) # Doesn't return anything for now
-        dataframe7 = self.tokenize(dataframe6)
+        dataframe7 = self.remove_numbers(dataframe6)
+        self.remove_stop_words(dataframe7) # Doesn't return anything for now
+        dataframe8 = self.tokenize(dataframe7)
 
         self.log.info(f"Sample of preprocessed data: {dataframe4.head()}")
 
-        return dataframe7
+        return dataframe8
 
     def remove_nan(self, dataframe):
         """Pass in a dataframe to remove NAN from those columns."""
@@ -48,9 +49,16 @@ class PreprocessText():
 
     def lowercase(self, dataframe):
         logging.info("Converting dataframe to lowercase")
-        lowercase_dataframe = dataframe.apply(lambda x: x.lower())
+        lowercase_dataframe = dataframe.str.lower()
         return lowercase_dataframe
 
+    def remove_whitespace(self, dataframe):
+        self.log.info("Removing whitespace from dataframe")
+        # replace more than 1 space with 1 space
+        merged_spaces = dataframe.str.replace(r"\s\s+", ' ', regex=True)
+        # delete beginning and trailing spaces
+        trimmed_spaces = merged_spaces.apply(lambda x: x.strip())
+        return trimmed_spaces
 
     def remove_special_characters(self, dataframe):
         self.log.info("Removing special characters from dataframe")
@@ -59,16 +67,8 @@ class PreprocessText():
 
     def remove_numbers(self, dataframe):
         self.log.info("Removing numbers from dataframe")
-        removed_numbers = dataframe.str.replace(r'\d+','')
-        return removed_numbers
-
-    def remove_whitespace(self, dataframe):
-        self.log.info("Removing whitespace from dataframe")
-        # replace more than 1 space with 1 space
-        merged_spaces = dataframe.str.replace(r"\s\s+",' ')
-        # delete beginning and trailing spaces
-        trimmed_spaces = merged_spaces.apply(lambda x: x.str.strip())
-        return trimmed_spaces
+        no_numbers = dataframe.str.replace('\d+', '')
+        return no_numbers
 
     def remove_stop_words(self, dataframe):
         # TODO: An option to pass in a custom list of stopwords would be cool.
@@ -76,7 +76,7 @@ class PreprocessText():
 
     def remove_website_links(self, dataframe):
         self.log.info("Removing website links from dataframe")
-        no_website_links = dataframe.str.replace(r"http\S+", "")
+        no_website_links = dataframe.replace(r"http\S+", "")
         return no_website_links
 
     def tokenize(self, dataframe):
@@ -84,7 +84,7 @@ class PreprocessText():
         return tokenized_dataframe
 
     def remove_emails(self, dataframe):
-        no_emails = dataframe.str.replace(r"\S*@\S*\s?")
+        no_emails = dataframe.replace(r"\S*@\S*\s?", "")
         return no_emails
 
     def expand_contractions(self, dataframe):

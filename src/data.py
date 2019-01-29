@@ -3,38 +3,17 @@ import logging
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
 import pandas as pd
-import boto3
 from sklearn.model_selection import train_test_split
 
-
-
-def get_data_from_s3():
-    logging.info('Starting to connect to s3')
-
-    # Old working S3 Code - will delete in next commit
-    #boto3.set_stream_logger('boto3', logging.INFO)
-    #client = boto3.client('s3')  # Low-level functional API
-    #resource = boto3.resource('s3')  # High-level object-oriented API
-    #bucket = resource.Bucket('pujaa-rajan-enron-email-data')  # Subsitute this for your s3 bucket name.
-    #s3_file_data = client.get_object(Bucket='pujaa-rajan-enron-email-data', Key='small_enron_sample.csv')
-    #print("connecting to s3 ", s3_file_data)
-
-    data_location = 's3://pujaa-rajan-enron-email-data/small_enron_sample.csv'
-    print("reading in data")
-    df = pd.read_csv(data_location)
-    print(df['content'].head())
-
-    return df.head()
-
-def read_csv(input_filepath):
+def read_data(file_path):
     """Reads in CVS.
 
     TODO: Add reading in guard rails and properties. More specific exception?
     TODO: When to split into test and training? Think about it and implement.
     """
-    logging.info(f'Starting to read in raw CSV from {input_filepath}')
+    logging.info(f'Starting to read in raw CSV from {file_path}')
     try:
-        dataframe = pd.read_csv(input_filepath)
+        dataframe = pd.read_csv(file_path)
         logging.info('Successfully finished reading raw CSV')
         logging.info(f'Read in dataframe of shape: {dataframe.shape}\n')
         logging.info(f'Sample of dataframe: {dataframe.head()}\n')
