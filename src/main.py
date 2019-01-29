@@ -28,31 +28,38 @@ def main(input_filepath):
 
     log.info('Starting to create Ngram datasets for model')
 
-    saved_ngram = ngram.Ngram(preprocessed_data)
+    ngram_data = ngram.Ngram(preprocessed_data)
 
-    while True:
-        #take user input
-        before_blank_tokens, after_blank_tokens = utilities.takeInput()
-        print(f'Before blank words: {before_blank_tokens}')
-        print(f'Before blank words: {after_blank_tokens}')
+    # Add loop so users can answer questions multiple times
 
-        ### PREDICTION
-        predicted_word = predict_next_word_forward(before_blank_tokens, saved_ngram.bigram_probability)
+    #take user input
+    before_blank_tokens, after_blank_tokens = utilities.takeInput()
+    print(f'Before blank words: {before_blank_tokens}')
+    print(f'After blank words: {after_blank_tokens}')
 
-        #choose most probable words for prediction
-        print('Word Prediction:', predicted_word)
+    ### PREDICTION
+    predicted_word_forward = predict_next_word(before_blank_tokens, ngram_data.bigram_forward_probability, 'forward')
+    predicted_word_backward = predict_next_word(before_blank_tokens, ngram_data.bigram_backward_probability, 'backward')
 
 
-def predict_next_word_forward(before_blank_words, bigram_probability):
-    if before_blank_words[-1] in bigram_probability:
-        token_probabilities = bigram_probability[before_blank_words[-1]]
+    #choose most probable words for prediction
+
+def predict_next_word(words_before_or_after_blank, bigram_probability, direction):
+    if direction == 'forward':
+        look_up_word = words_before_or_after_blank[-1] # Start with word right before blank
+    elif direction == 'backward':
+        look_up_word = words_before_or_after_blank[0]  # Start with first word after blank
+    else:
+        raise RuntimeError('Specify direction as forward or backward for ngram_probability function.')
+        # ? Is this the right error to raise?
+
+    if look_up_word in bigram_probability:
+        token_probabilities = bigram_probability[look_up_word]
         sorted_probabilities = sorted(token_probabilities, key=lambda x: x[0], reverse=True)
+        print(f'Final word probabilities for {direction} direction')
         print(sorted_probabilities[:10])
         return sorted_probabilities[0]
 
-def predict_next_word_backward(after_blank_tokens, bigram_probability):
-    # TODO
-    return None
 
 if __name__ == "__main__":
     logging.info("Going to run main function")

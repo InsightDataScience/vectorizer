@@ -41,12 +41,9 @@ def takeInput():
         sen = input('Enter the string\n')
         # ? We may need to remove puncuation from the input
         before_and_after_blank = sen.split("_")
-        print(before_and_after_blank)
         before_blank_tokens = before_and_after_blank[0].split()[-3:]
-        print(before_blank_tokens)
         after_blank_tokens = before_and_after_blank[1].split()[:3]
-        print(after_blank_tokens)
-        if len(before_blank_tokens) < 3 or len(after_blank_tokens):
+        print("EXTRACTED TEXT FROM INPUT")
+        if len(before_blank_tokens) < 3 or len(after_blank_tokens) < 3:
             print("Please enter at least 3 words before and after the blank!")
-
-    return before_blank_tokens, after_blank_tokens
+        return before_blank_tokens, after_blank_tokens

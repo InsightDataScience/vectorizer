@@ -21,8 +21,15 @@ class Ngram:
         bigram_counter = Counter()
         self.bigrams, self.bigram_count = self.ngram_generator_and_counter(preprocessed_dataframe, 2, bigram_counter)
         self.log.info(f'bigram count: {self.bigram_count}')
-        self.bigram_probability = Counter()
-        self.ngram_probability(self.unigram_count, self.bigram_count, self.bigram_probability)
+
+        self.bigram_forward_probability = Counter()
+        self.ngram_probability(self.unigram_count, self.bigram_count, self.bigram_forward_probability, 'forward')
+
+        self.bigram_backward_probability = Counter()
+        self.ngram_probability(self.unigram_count, self.bigram_count, self.bigram_backward_probability, 'backward')
+        print(f"Forward bigram probability counter: {self.bigram_forward_probability}")
+        print(f"Backward bigram probability counter: {self.bigram_backward_probability}")
+
 
     def word_in_document_counter(self, preprocessed_dataframe):
 
@@ -65,27 +72,40 @@ class Ngram:
                 counter.update(x)
         return list_of_ngrams, counter
 
-    def ngram_probability(self, unigram_count, ngram_count, ngram_probability):
+    def ngram_probability(self, unigram_count, ngram_count, ngram_probability, direction):
         """for creating prob dict for bigram probabilities
         creates dict for storing probable words with their probabilities for a trigram sentence
         ADD 1 Smoothing used"""
 
+        print("in ngram probability functoin")
         unique_word_count = len(unigram_count)
-
         # create a dictionary of probable words with their probabilities for bigram probabilites
         for ngram_token in ngram_count:
             # unigram for key
-            unigram_token = ngram_token[0]
+            if direction=='forward':
+                unigram_token = ngram_token[0]
+            elif direction=='backward':
+                unigram_token = ngram_token[-1]  # Start with the second or last word first and count backwards
+            else:
+                raise RuntimeError('Specify direction as forward or backward for ngram_probability function.')
+                # ? Is this the right error to raise?
 
             # find the probability and add 1 smoothing has been used
             probability = (ngram_count[ngram_token] + 1) / (unigram_count[unigram_token] + unique_word_count)
+            # HELP ? FOR BACKWARDS I AM ASSUMING THE NUMERATOR IS THE SAME AS FORWARDS PROBABILITY
 
             # bi_prob_dict is a dict of list and if the unigram sentence is not present in the Dictionary then add it
             if unigram_token not in ngram_probability:
                 ngram_probability[unigram_token] = []
-                ngram_probability[unigram_token].append([probability, ngram_token[-1]])
+                if direction == 'forward':
+                    last_ngram_token = ngram_token[-1]
+                elif direction == 'backward':
+                    last_ngram_token = ngram_token[0]
+                ngram_probability[unigram_token].append([probability, last_ngram_token])
             # the unigram sentence is present but the probable word is missing,then add it
             else:
-                ngram_probability[unigram_token].append([probability, ngram_token[-1]])
+                ngram_probability[unigram_token].append([probability, last_ngram_token])
+
+
 
 

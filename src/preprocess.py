@@ -24,16 +24,23 @@ class PreprocessText():
         # TODO: Make all quotes same type.
 
         self.log.info("In preprocess function.")
+
         dataframe1 = self.remove_nan(dataframe)
         dataframe2 = self.lowercase(dataframe1)
-        dataframe3 = self.remove_special_characters(dataframe2)
-        self.remove_stop_words(dataframe3) # Doesn't return anything for now
-        dataframe4 = self.remove_website_links(dataframe3)
-        dataframe5 = self.tokenize(dataframe4)
+        dataframe3 = self.remove_whitespace(dataframe2)
+
+        # Remove emails and websites before removing special characters
+        dataframe4 = self.remove_emails(self, dataframe3)
+        dataframe5 = self.remove_website_links(self, dataframe4)
+
+        dataframe6 = self.remove_special_characters(dataframe5)
+        dataframe7 - self.remove_numbers(dataframe6)
+        self.remove_stop_words(dataframe8) # Doesn't return anything for now
+        dataframe7 = self.tokenize(dataframe6)
 
         self.log.info(f"Sample of preprocessed data: {dataframe4.head()}")
 
-        return dataframe5
+        return dataframe7
 
     def remove_nan(self, dataframe):
         """Pass in a dataframe to remove NAN from those columns."""
@@ -77,8 +84,8 @@ class PreprocessText():
         return tokenized_dataframe
 
     def remove_emails(self, dataframe):
-        # TODO: Not a priority right now. Come back to it later.
-        return dataframe
+        no_emails = dataframe.str.replace(r"\S*@\S*\s?")
+        return no_emails
 
     def expand_contractions(self, dataframe):
         # TODO: Not a priority right now. Come back to it later.
