@@ -5,6 +5,7 @@
 
 import sys
 import logging
+import argparse
 
 
 __author__ = "Pujaa Rajan"
@@ -33,8 +34,7 @@ def logger():
     logger.addHandler(ch)
     logger.info('Finished creating logger')
 
-
-def takeInput():
+def take_input():
     cond = False
     # take input
     while (cond == False):
