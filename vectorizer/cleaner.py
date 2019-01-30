@@ -1,17 +1,18 @@
 import pandas as pd
 import numpy as np
 
-def remove_URL(df, text_field):
-	df[text_field] = df[text_field].str.replace(r"http\S+", "")
-	df[text_field] = df[text_field].str.replace(r"http", "")
-	return df
+def remove_URL(tweet):
+	tweet = tweet.replace(r"http\S+", "")
+	tweet = tweet.replace(r"http", "")
+	return tweet
 
-def remove_special_characters(df, text_field):
-	df[text_field] = df[text_field].str.replace(r"@\S+", "")
-	df[text_field] = df[text_field].str.replace(r"[^A-Za-z0-9(),!?@\'\`\"\_\n]", " ")
-	df[text_field] = df[text_field].str.replace(r"@", "at")
-	return df
+def remove_special_characters(tweet):
+	# tweet = tweet.replace(r"@\S+", "")
+	tweet = tweet.replace(r"[^A-Za-z0-9 ]+", "")
+	# tweet = tweet.replace(r"[^A-Za-z0-9(),!?@\'\`\"\_\n]", " ")
+	# tweet = tweet.replace(r"@", "at")
+	return tweet
 
-def lowercase(df, text_field):
-	df[text_field] = df[text_field].str.lower()
-	return df
+def lowercase(tweet):
+	tweet = tweet.lower()
+	return tweet
