@@ -1,18 +1,18 @@
 import pandas as pd
 import numpy as np
 
-def remove_URL(tweet):
-	tweet = tweet.replace(r"http\S+", "")
-	tweet = tweet.replace(r"http", "")
-	return tweet
+def remove_URL(text):
+	text = text.replace(r"http\S+", "")
+	text = text.replace(r"http", "")
+	return text
 
-def remove_special_characters(tweet):
-	# tweet = tweet.replace(r"@\S+", "")
-	tweet = tweet.replace(r"[^A-Za-z0-9 ]+", "")
-	# tweet = tweet.replace(r"[^A-Za-z0-9(),!?@\'\`\"\_\n]", " ")
-	# tweet = tweet.replace(r"@", "at")
-	return tweet
+def remove_special_characters(text):
+	# text = text.replace(r"@\S+", "")
+	text = text.replace(r"[^A-Za-z0-9 ]+", "")
+	# text = text.replace(r"[^A-Za-z0-9(),!?@\'\`\"\_\n]", " ")
+	# text = text.replace(r"@", "at")
+	return text
 
-def lowercase(tweet):
-	tweet = tweet.lower()
-	return tweet
+def lowercase(text):
+	text = text.lower()
+	return text
