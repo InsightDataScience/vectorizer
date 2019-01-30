@@ -9,19 +9,19 @@ from vectorizer import preprocess
 
 # api = Api(app)
 
-@app.route('/glove', methods=['POST'])
-def glove():
+@app.route('/infer', methods=['POST'])
+def infer():
     tweet = request.form.get('tweet')
     print('raw tweet: {}'.format(tweet))
 
     # cleaning
     tweet = clean.remove_URL(tweet)
     tweet = clean.remove_special_characters(tweet)
-    tweet = clean.lowercase(tweet)
+    cleaned_tweet = clean.lowercase(tweet)
     print('cleaned tweet: {}'.format(tweet))
 
     # preprocessing
-    # TODO
+    preprocessed_tweet = preprocess.inference_tokenize(cleaned_tweet)
 
     # embedding
     # TODO
