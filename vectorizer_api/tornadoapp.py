@@ -1,5 +1,9 @@
 #! /usr/bin/env python
 
+"""This is a tutorial from https://github.com/InsightDataScience/data-engineering-ecosystem/wiki/Flask
+TODO: might use tornado when scaling
+"""
+
 from tornado.wsgi import WSGIContainer
 from tornado.ioloop import IOLoop
 from tornado.web import FallbackHandler, RequestHandler, Application

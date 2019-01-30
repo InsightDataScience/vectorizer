@@ -4,7 +4,8 @@ from flask_restful import Resource, Api
 
 import spacy
 
-from vectorizer import cleaner
+from vectorizer import clean
+from vectorizer import preprocess
 
 # api = Api(app)
 
@@ -14,9 +15,9 @@ def glove():
     print('raw tweet: {}'.format(tweet))
 
     # cleaning
-    tweet = cleaner.remove_URL(tweet)
-    tweet = cleaner.remove_special_characters(tweet)
-    tweet = cleaner.lowercase(tweet)
+    tweet = clean.remove_URL(tweet)
+    tweet = clean.remove_special_characters(tweet)
+    tweet = clean.lowercase(tweet)
     print('cleaned tweet: {}'.format(tweet))
 
     # preprocessing
