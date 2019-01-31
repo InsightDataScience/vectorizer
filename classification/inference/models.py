@@ -13,7 +13,7 @@ def predict(X_train, y_train, X_test):
 
     return clf.predict(X_test)
 
-def keras_model(embedding_matrix, embedding_size, input_length):
+def keras_model(embedding_matrix, embedding_size, input_length, vocab_size):
     # 1/27/19 Adapted from https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
     # define model
     model = Sequential()
