@@ -1,5 +1,5 @@
 from vectorizer import app
-from flask import Flask, flash, request, redirect, url_for
+from flask import Flask, flash, request, redirect, url_for, jsonify
 from flask_restful import Resource, Api
 from werkzeug.utils import secure_filename
 
@@ -27,7 +27,9 @@ def infer():
     # embedding
     embedded_text = embed.inference_glove_embedding(preprocessed_text)
 
-    return str(embedded_text)
+    # convert to list in order to jsonify
+    embedded_text_list = embedded_text.tolist()
+    return jsonify(embedded_text_list)
 
 def allowed_file(filename):
     return '.' in filename and \

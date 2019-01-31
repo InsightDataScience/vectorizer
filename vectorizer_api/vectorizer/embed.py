@@ -28,4 +28,6 @@ def inference_glove_embedding(preprocessed_text):
 		if embedding_vector is not None:
 			embedding_matrix[i] = embedding_vector
 
-	return embedding_matrix
+	# using float to ensure accuracy
+	averaged_embedding = np.mean(embedding_matrix, axis=0, dtype=np.float64)
+	return averaged_embedding
