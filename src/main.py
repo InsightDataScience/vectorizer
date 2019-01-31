@@ -5,6 +5,9 @@ import preprocess
 import utilities
 import ngram
 import pandas as pd
+from sklearn.metrics import accuracy_score
+from time import time
+
 
 @click.command()
 @click.argument('input_file_path', type=str, required=True)
@@ -32,10 +35,14 @@ def main(input_file_path, run_test,  cli):
         forward_answers = []
         backward_answers = []
         test_fib_dataframe['fill in the blank'].apply(lambda fib: answer_fib(fib, forward_answers, backward_answers, ngram_data))
-        test_fib_dataframe['Forward_Answers_w_Prob'] = forward_answers
-        test_fib_dataframe['Backward_Answers_w_Prob'] = backward_answers
+        test_fib_dataframe['Forward Answers'] = [i[1] for i in forward_answers]
+        test_fib_dataframe['Forward Answer Probability'] = [i[0] for i in forward_answers]
+        test_fib_dataframe['Backward Answers'] = [i[1] for i in backward_answers]
+        test_fib_dataframe['Backward Answer Probability'] = [i[0] for i in backward_answers]
         test_fib_dataframe.to_csv('test_fib_answers.csv')
+        create_summary_statistics(test_fib_dataframe['answer'], test_fib_dataframe['Forward Answers'], test_fib_dataframe['Backward Answers'],)
         logging.info("Done running tests")
+
         exit()
 
     # TODO Add loop so users can answer questions multiple times
@@ -51,6 +58,18 @@ def main(input_file_path, run_test,  cli):
         predict_next_word(before_blank_tokens, ngram_data.bigram_forward_probability, 'forward')
         predict_next_word(before_blank_tokens, ngram_data.bigram_backward_probability, 'backward')
         #choose most probable words for prediction
+
+
+
+def create_summary_statistics(correct_answer, forward_answer, backward_answer):
+    forward_accuracy = accuracy_score(correct_answer, forward_answer)
+    backward_accuracy = accuracy_score(correct_answer, backward_answer)
+    summary_statistics = open("summary_statistics.txt", "a")
+    summary_statistics.write(f'The forward model has an accuracy of: {forward_accuracy}\n')
+    summary_statistics.write(f'The backward model has an accuracy of: {backward_accuracy}\n')
+    summary_statistics.close()
+
+
 
 def answer_fib(fib, forward_answers, backward_answers, ngram_data):
     before_blank_tokens, after_blank_tokens = utilities.take_input(fib)
@@ -74,13 +93,19 @@ def predict_next_word(words_before_or_after_blank, bigram_probability, direction
     if look_up_word in bigram_probability:
         token_probabilities = bigram_probability[look_up_word]
         sorted_probabilities = sorted(token_probabilities, key=lambda x: x[0], reverse=True)
-        logging.info(f'Final word probabilities for {direction} direction:{sorted_probabilities[:10]}')
+        logging.info(f'Final word probabilities for {direction} direction:{sorted_probabilities[:3]}')
         return sorted_probabilities[0]
     else:
-        # ? FIX THIS PART WHICH IS WHAT TO DO IF THE LOOK UP WORD IS NOT IN THE PROBABILITY
-        return 'word not in probability matrix.'
+        # TODO FIX THIS PART WHICH IS WHAT TO DO IF THE LOOK UP WORD IS NOT IN THE PROBABILITY
+        return ('unknown probability', 'word not in probability matrix')
 
 
 if __name__ == "__main__":
     logging.info('Going to run main function.')
+    start = time()
     main()
+    end = time()
+    time = start - end
+    summary_statistics = open("summary_statistics.txt", "a")
+    summary_statistics.write(f'The program ran for: {backward_accuracy}')
+    summary_statistics.close()

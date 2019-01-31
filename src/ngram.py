@@ -27,18 +27,12 @@ class Ngram:
 
         self.bigram_backward_probability = Counter()
         self.ngram_probability(self.unigram_count, self.bigram_count, self.bigram_backward_probability, 'backward')
-        print(f'Forward bigram probability example: {self.bigram_forward_probability.most_common(3)}')
-        print(f'Backward bigram probability example: {self.bigram_backward_probability.most_common(3)}')
+        print(f'Forward bigram probability example: {self.bigram_forward_probability.most_common(1)}')
+        print(f'Backward bigram probability example: {self.bigram_backward_probability.most_common(1)}')
 
 
     def word_in_document_counter(self, preprocessed_dataframe):
-
-        # Sci kit learn version below is an option
-        # I think the sci kit learn one saves more memory
-        #count_vectorizer = CountVectorizer()
-        #preprocessed_dataframe.apply(lambda row: count_vectorizer.fit_transform(row))
-
-        # NLTK version below. This is creating a word count per document.
+        """This is creating a word count per document."""
         return preprocessed_dataframe.apply(lambda row: nltk.FreqDist(row))
 
     def ngram_generator_and_counter(self, preprocessed_dataframe, n, counter):
