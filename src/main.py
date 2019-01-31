@@ -4,6 +4,7 @@ import data
 import preprocess
 import utilities
 import ngram
+import pandas as pd
 
 @click.command()
 @click.argument('input_file_path', type=str, required=True)
@@ -21,13 +22,28 @@ def main(input_file_path, run_test,  cli):
     log.info(f'Read in {email_data.shape[0]} emails.')
     log.info('Extracting only email content.')
     email_content = email_data['content']
-    preprocessed_data = preprocess.PreprocessText(email_content).preprocessed_text
-    ngram_data = ngram.Ngram(preprocessed_data)
+
+    if run_test:
+        training_emails, testing_emails = data.train_test_data(email_content)
+        preprocessed_training_emails = preprocess.PreprocessText(training_emails).preprocessed_text
+        ngram_data = ngram.Ngram(preprocessed_training_emails)
+        data.create_test_data(testing_emails)
+        test_fib_dataframe = pd.read_csv('test_fill_in_the_blank.csv')
+        forward_answers = []
+        backward_answers = []
+        test_fib_dataframe['fill in the blank'].apply(lambda fib: answer_fib(fib, forward_answers, backward_answers, ngram_data))
+        test_fib_dataframe['Forward_Answers_w_Prob'] = forward_answers
+        test_fib_dataframe['Backward_Answers_w_Prob'] = backward_answers
+        test_fib_dataframe.to_csv('test_fib_answers.csv')
+        logging.info("Done running tests")
+        exit()
 
     # TODO Add loop so users can answer questions multiple times
     if cli:
+        preprocessed_data = preprocess.PreprocessText(email_content).preprocessed_text
+        ngram_data = ngram.Ngram(preprocessed_data)
         #take user input
-        before_blank_tokens, after_blank_tokens = utilities.take_input()
+        before_blank_tokens, after_blank_tokens = utilities.take_input('cli')
         log.info(f'Before blank words: {before_blank_tokens}')
         log.info(f'After blank words: {after_blank_tokens}')
 
@@ -35,6 +51,15 @@ def main(input_file_path, run_test,  cli):
         predict_next_word(before_blank_tokens, ngram_data.bigram_forward_probability, 'forward')
         predict_next_word(before_blank_tokens, ngram_data.bigram_backward_probability, 'backward')
         #choose most probable words for prediction
+
+def answer_fib(fib, forward_answers, backward_answers, ngram_data):
+    before_blank_tokens, after_blank_tokens = utilities.take_input(fib)
+    ### PREDICTION
+    forward_answers.append(predict_next_word(before_blank_tokens, ngram_data.bigram_forward_probability, 'forward'))
+    backward_answers.append(predict_next_word(before_blank_tokens, ngram_data.bigram_backward_probability, 'backward'))
+    # choose most probable words for prediction
+    return None
+
 
 def predict_next_word(words_before_or_after_blank, bigram_probability, direction):
     if direction == 'forward':

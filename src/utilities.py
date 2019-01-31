@@ -34,16 +34,16 @@ def logger():
     logger.addHandler(ch)
     logger.info('Finished creating logger')
 
-def take_input():
-    cond = False
-    # take input
-    while (cond == False):
-        sen = input('Enter the string\n')
-        # ? We may need to remove puncuation from the input
-        before_and_after_blank = sen.split("_")
-        before_blank_tokens = before_and_after_blank[0].split()[-3:]
-        after_blank_tokens = before_and_after_blank[1].split()[:3]
-        print("EXTRACTED TEXT FROM INPUT")
-        if len(before_blank_tokens) < 3 or len(after_blank_tokens) < 3:
-            print("Please enter at least 3 words before and after the blank!")
-        return before_blank_tokens, after_blank_tokens
+def take_input(input):
+    if input == 'cli':
+    # TODO give user option to enter strings one after another
+            sen = input('Enter the string\n')
+    else:
+        sen = input
+    # ? We may need to remove puncuation from the input
+    before_and_after_blank = sen.split("_")
+    before_blank_tokens = before_and_after_blank[0].split()[-3:]
+    after_blank_tokens = before_and_after_blank[1].split()[:3]
+    if len(before_blank_tokens) < 3 or len(after_blank_tokens) < 3:
+        print("Please enter at least 3 words before and after the blank!")
+    return before_blank_tokens, after_blank_tokens
