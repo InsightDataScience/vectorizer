@@ -2,6 +2,8 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 import numpy as np
 import spacy
 
+GLOVE_EMBEDDING = spacy.load('en_vectors_web_lg')
+
 def cv(df):
 	count_vectorizer = CountVectorizer()
 	embedding = count_vectorizer.fit_transform(df)
@@ -20,10 +22,9 @@ def glove_embedding(df, tokenizer):
 
 def inference_glove_embedding(preprocessed_text):
 	embedding_matrix = np.zeros((len(preprocessed_text), 300))
-	nlp = spacy.load('en_vectors_web_lg')
 	for i in range(len(preprocessed_text)):
 		word = preprocessed_text[i]
-		embedding_vector = nlp.vocab.get_vector(word)
+		embedding_vector = GLOVE_EMBEDDING.vocab.get_vector(word)
 		if embedding_vector is not None:
 			embedding_matrix[i] = embedding_vector
 
