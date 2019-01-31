@@ -107,5 +107,6 @@ if __name__ == "__main__":
     end = time()
     time = start - end
     summary_statistics = open("summary_statistics.txt", "a")
-    summary_statistics.write(f'The program ran for: {backward_accuracy}')
+    print("here")
+    summary_statistics.write(f'The program ran for: {time}\n')
     summary_statistics.close()
