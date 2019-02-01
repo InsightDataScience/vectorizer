@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
 from pathlib import Path
-from dotenv import find_dotenv, load_dotenv
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from nltk import tokenize
