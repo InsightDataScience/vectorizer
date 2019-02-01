@@ -60,7 +60,6 @@ def main(input_file_path, run_test,  cli):
         #choose most probable words for prediction
 
 
-
 def create_summary_statistics(correct_answer, forward_answer, backward_answer):
     forward_accuracy = accuracy_score(correct_answer, forward_answer)
     backward_accuracy = accuracy_score(correct_answer, backward_answer)
@@ -68,7 +67,6 @@ def create_summary_statistics(correct_answer, forward_answer, backward_answer):
     summary_statistics.write(f'The forward model has an accuracy of: {forward_accuracy}\n')
     summary_statistics.write(f'The backward model has an accuracy of: {backward_accuracy}\n')
     summary_statistics.close()
-
 
 
 def answer_fib(fib, forward_answers, backward_answers, ngram_data):
