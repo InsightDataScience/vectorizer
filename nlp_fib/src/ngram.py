@@ -90,6 +90,21 @@ class Ngram:
             else:
                 ngram_probability[unigram_token].append([probability, last_ngram_token])
 
-
-
-
+    def predict_next_word(self, words_before_or_after_blank, bigram_probability, direction):
+        if direction == 'forward':
+            logging.info('Predicting the next word using a FORWARD n gram model.')
+            look_up_word = words_before_or_after_blank[-1]  # Start with word right before blank
+        elif direction == 'backward':
+            logging.info('Predicting the next word using a BACKWARD n gram model.')
+            look_up_word = words_before_or_after_blank[0]  # Start with first word after blank
+        else:
+            raise RuntimeError('Specify direction as forward or backward for ngram_probability function.')
+            # ? Is this the right error to raise?
+        if look_up_word in bigram_probability:
+            token_probabilities = bigram_probability[look_up_word]
+            sorted_probabilities = sorted(token_probabilities, key=lambda x: x[0], reverse=True)
+            logging.info(f'Final word probabilities for {direction} direction:{sorted_probabilities[:3]}')
+            return sorted_probabilities[0:10]
+        else:
+            # TODO FIX THIS PART WHICH IS WHAT TO DO IF THE LOOK UP WORD IS NOT IN THE PROBABILITY
+            return ('unknown probability', 'word not in probability matrix')
