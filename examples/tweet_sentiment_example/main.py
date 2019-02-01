@@ -22,7 +22,7 @@ def load_data(path):
 	return dataset
 
 def load_labels(path):
-	labels = pd.read_csv(path, index_col=0, header=None)
+	labels = pd.read_csv(path, index_col=0)
 	labels.columns = ['labels']
 	return labels
 
@@ -30,13 +30,7 @@ def main():
 	dataset = load_data(DATA_PATH)
 	labels = load_labels(LABEL_PATH)
 
-	# hacky approach to find vocab size for embedding layer in Keras
-	data_doc = dataset['text'].tolist()
-	t = Tokenizer()
-	t.fit_on_texts(data_doc)
-	vocab_size = len(t.word_index) + 1
-
-	matrix_embedding = np.zeros((vocab_size, 300))
+	matrix_embedding = np.zeros((len(dataset), 300))
 	for i in range(len(dataset)):
 		text = dataset['text'][i]
 		input = {'text' : text}
@@ -47,15 +41,12 @@ def main():
 	embedding_size = matrix_embedding.shape[1]
 
 	# specifying exact numbers now, need to convert to variables
-	model = models.keras_model(matrix_embedding, embedding_size, 1, vocab_size)
+	model = models.keras_model(embedding_size)
 
 	categorical_labels = to_categorical(labels, num_classes=3)
 
-	list_embedding = matrix_embedding.tolist()
-	list_labels = categorical_labels.tolist()
-
-	X_train, X_test, y_train, y_test = train_test_split(list_corpus,
-	list_labels,
+	X_train, X_test, y_train, y_test = train_test_split(matrix_embedding,
+	categorical_labels,
 	test_size=0.2,
 	random_state=40)
 
