@@ -9,41 +9,30 @@ from nltk.tokenize import word_tokenize
 from random import randint
 import preprocess
 import csv
+import pickle
+import boto3
 
-
-def read_data(file_path):
+def read_data(input_filepath):
     """Reads in data from csv file or s3 bucket.
 
     # TODO: Add descriptive statistics about emails and create some graphs that you can save.
     # TODO: Add reading in guard rails and properties. More specific exception?
     """
-    logging.info(f'Starting to read in raw CSV from {file_path}')
+    logging.info(f'Starting to read in raw data from {input_filepath} (may be CSV or s3)')
     try:
-        dataframe = pd.read_csv(file_path)
-        logging.info('Successfully finished reading raw CSV')
+        dataframe = pd.read_csv(input_filepath)
+        logging.info('Successfully finished reading raw data (may be CSV or s3)')
         logging.info(f'Read in dataframe of shape: {dataframe.shape}\n')
         logging.info(f'Sample of dataframe: {dataframe.head()}\n')
         return dataframe
-    except Exception:
-        logging.error(f'Failed to read in raw CSV from {input_filepath}')
+    except Exception as e:
+        logging.error(f'Failed to read in raw data from {input_filepath} (may be CSV or s3). {e}')
+        exit()
 
 
 def train_test_data(dataframe):
     training_emails, testing_emails = train_test_split(dataframe, test_size=.2, train_size=.8, shuffle=True)
     return training_emails, testing_emails
-
-
-def create_test_data(dataframe):
-    """Create test data. Input is the test part of the train_test_data function. Output is csv with input and labels."""
-    logging.info("in create test data")
-    dataframe_no_nan = dataframe.dropna()
-    sentence_dataframe = dataframe_no_nan.apply(lambda row: tokenize.sent_tokenize(row))
-    good_sentences_only = []
-    sentence_dataframe.apply(lambda row: check_if_good_sentence(row, good_sentences_only))
-    fill_in_blanks = create_blanks(good_sentences_only)
-    write_to_csv(fill_in_blanks)
-    logging.info("End of creating test data")
-    return None
 
 
 def write_to_csv(test_data):
@@ -54,30 +43,15 @@ def write_to_csv(test_data):
             csv_out.writerow(row)
 
 
-def check_if_good_sentence(row, good_sentences_only):
-    # TODO DOESN'T WORK
-    for s in row:
-        m = re.search(r'https?:|@\w+|\d', s)
-        n = re.search(r'[^A-Za-z\s!?.]', s)
-        if m or n:
-            pass
-        elif len(word_tokenize(s)) < 8:
-            pass
-        else:
-            good_sentences_only.append(s[:-1])
+def create_pickle_file(what_to_pickle, output_filepath, output_filename, s3):
+    if s3:
+        s3 = boto3.resource('s3')
+        object = s3.Object('pujaa-rajan-enron-email-data', output_filename)
+        #object.put(Body=what_to_pickle)
 
-
-def create_blanks(good_sentences_only):
-    fill_in_blanks = []
-    for sentence in good_sentences_only:
-        word_index = randint(3, len(word_tokenize(sentence))-4)
-        words_in_sentence = word_tokenize(sentence)
-        answer = words_in_sentence[word_index] # Saving the answer before replacing it with a blank
-        words_in_sentence[word_index] = '_' # Replacing with a blank
-        full_sentence = " ".join(words_in_sentence)
-        fill_in_blanks.append((full_sentence,answer))
-    return fill_in_blanks
-
+    else:
+        with open(f'{output_filepath}/{output_filename}', 'wb') as outputfile:
+            pickle.dump(what_to_pickle, outputfile)
 
 
 def doInterpolatedPredictionAdd1(sen, bi_dict, vocab_dict, token_len, word_choice, param):
@@ -102,3 +76,39 @@ def doInterpolatedPredictionAdd1(sen, bi_dict, vocab_dict, token_len, word_choic
         return pred[1]
     else:
         return ''
+
+    #
+    # def create_test_data(self, dataframe):
+    #     """Create test data. Input is the test part of the train_test_data function. Output is csv with input and labels."""
+    #     self.log.info("in create test data")
+    #     dataframe_no_nan = dataframe.dropna()
+    #     sentence_dataframe = dataframe_no_nan.apply(lambda row: tokenize.sent_tokenize(row))
+    #     good_sentences_only = []
+    #     sentence_dataframe.apply(lambda row: self.check_if_good_sentence(row, good_sentences_only))
+    #     fill_in_blanks = self.create_blanks(good_sentences_only)
+    #     data.write_to_csv(fill_in_blanks)
+    #     logging.info("End of creating test data")
+    #     return None
+    #
+    # def create_blanks(self, good_sentences_only):
+    #     fill_in_blanks = []
+    #     for sentence in good_sentences_only:
+    #         word_index = randint(3, len(word_tokenize(sentence)) - 4)
+    #         words_in_sentence = word_tokenize(sentence)
+    #         answer = words_in_sentence[word_index]  # Saving the answer before replacing it with a blank
+    #         words_in_sentence[word_index] = '_'  # Replacing with a blank
+    #         full_sentence = " ".join(words_in_sentence)
+    #         fill_in_blanks.append((full_sentence, answer))
+    #     return fill_in_blanks
+    #
+    # def check_if_good_sentence(self, row, good_sentences_only):
+    #     # TODO DOESN'T WORK
+    #     for s in row:
+    #         m = re.search(r'https?:|@\w+|\d', s)
+    #         n = re.search(r'[^A-Za-z\s!?.]', s)
+    #         if m or n:
+    #             pass
+    #         elif len(word_tokenize(s)) < 8:
+    #             pass
+    #         else:
+    #             good_sentences_only.append(s[:-1])

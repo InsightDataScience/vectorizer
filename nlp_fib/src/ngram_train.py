@@ -1,12 +1,13 @@
 import logging
 from nltk.util import ngrams
-import ngram
 import nltk
 from collections import Counter
+import data
+import pandas as pd
 
 
-class Ngram:
-    def __init__(self, preprocessed_dataframe):
+class NgramTrain:
+    def __init__(self, preprocessed_dataframe, output_file_path):
         self.log = logging.getLogger('Enron_email_analysis.ngram')
         self.log.info('Starting to create ngram model inputs.')
 
@@ -18,18 +19,24 @@ class Ngram:
         unigram_counter = Counter()
         self.unigrams, self.unigram_count = self.ngram_generator_and_counter(preprocessed_dataframe, 1, unigram_counter)
         self.log.info(f'Unigram count example: {list(self.unigram_count)[:1]}')
+
         bigram_counter = Counter()
         self.bigrams, self.bigram_count = self.ngram_generator_and_counter(preprocessed_dataframe, 2, bigram_counter)
         self.log.info(f'Bigram count: {list(self.bigram_count)[:1]}')
 
+        data.create_pickle_file(self.bigram_count, output_file_path, 'bigram_count.pickle', True)
+
+
         self.bigram_forward_probability = Counter()
         self.ngram_probability(self.unigram_count, self.bigram_count, self.bigram_forward_probability, 'forward')
+        self.log.info(f'Forward bigram probability example: {self.bigram_forward_probability.most_common(1)}')
+        data.create_pickle_file(self.bigram_forward_probability, output_file_path, 'bigram_forward_probability.pickle', False)
+
 
         self.bigram_backward_probability = Counter()
         self.ngram_probability(self.unigram_count, self.bigram_count, self.bigram_backward_probability, 'backward')
-        print(f'Forward bigram probability example: {self.bigram_forward_probability.most_common(1)}')
-        print(f'Backward bigram probability example: {self.bigram_backward_probability.most_common(1)}')
-
+        self.log.info(f'Backward bigram probability example: {self.bigram_backward_probability.most_common(1)}')
+        data.create_pickle_file(self.bigram_backward_probability, output_file_path, 'bigram_backward_probability.pickle', False)
 
     def word_in_document_counter(self, preprocessed_dataframe):
         """This is creating a word count per document."""
@@ -89,7 +96,5 @@ class Ngram:
             # the unigram sentence is present but the probable word is missing,then add it
             else:
                 ngram_probability[unigram_token].append([probability, last_ngram_token])
-
-
 
 
