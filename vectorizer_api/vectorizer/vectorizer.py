@@ -17,9 +17,7 @@ def infer():
     text = request.form.get('text')
 
     # cleaning
-    text = clean.remove_URL(text)
-    text = clean.remove_special_characters(text)
-    cleaned_text = clean.lowercase(text)
+    cleaned_text = clean.clean_str(text)
 
     # preprocessing
     preprocessed_text = preprocess.inference_tokenize(cleaned_text)
