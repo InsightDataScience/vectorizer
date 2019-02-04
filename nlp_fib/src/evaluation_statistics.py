@@ -4,7 +4,7 @@ class Evaluation:
     """ This class takes in the probability files
         """
 
-    def __init__(self, ngram_test):
+    def __init__(self, ngram_test, output_file_path):
         self.correct_answer = ngram_test.test_fib_dataframe['answer']
         self.forward_ngram_model_answer = ngram_test.test_fib_dataframe['Forward Answers']
         self.backward_ngram_model_answer = ngram_test.test_fib_dataframe['Backward Answers']
@@ -12,7 +12,7 @@ class Evaluation:
         self.forward_accuracy = self.calculate_accuracy(self.correct_answer, self.forward_ngram_model_answer)
         self.backward_accuracy = self.calculate_accuracy(self.correct_answer, self.backward_ngram_model_answer)
         self.merged_accuracy = None # TODO
-        self.create_summary_statistics(self.forward_accuracy, self.backward_accuracy)
+        self.create_summary_statistics(self.forward_accuracy, self.backward_accuracy, output_file_path)
 
     def calculate_accuracy(self, correct_answer, model_answer):
         correct_count = 0
@@ -25,9 +25,9 @@ class Evaluation:
         return correct_count/len(correct_answer)
 
 
-    def create_summary_statistics(self, forward_accuracy, backward_accuracy):
+    def create_summary_statistics(self, forward_accuracy, backward_accuracy, output_file_path):
 
-        summary_statistics = open("summary_statistics.txt", "a")
+        summary_statistics = open(f'{output_file_path}/summary_statistics.txt', 'a')
         summary_statistics.write(f'The forward model has an accuracy of: {forward_accuracy}\n')
         summary_statistics.write(f'The backward model has an accuracy of: {backward_accuracy}\n')
         summary_statistics.close()
