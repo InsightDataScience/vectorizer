@@ -46,3 +46,6 @@ singledispatch == 3.4.0.3
 s3fs == 0.2.0
 
 theano == 1.0.4
+
+python3 -m nltk.downloader stopwords
+python3 -m nltk.downloader punkt

@@ -12,6 +12,7 @@ import csv
 import pickle
 import boto3
 
+
 def read_data(input_filepath):
     """Reads in data from csv file or s3 bucket.
 
@@ -35,14 +36,6 @@ def train_test_data(dataframe):
     return training_emails, testing_emails
 
 
-def write_to_csv(test_data):
-    with open('test_fill_in_the_blank.csv', 'w') as out:
-        csv_out = csv.writer(out, delimiter=',')
-        csv_out.writerow(['fill in the blank', 'answer'])
-        for row in test_data:
-            csv_out.writerow(row)
-
-
 def create_pickle_file(what_to_pickle, output_filepath, output_filename, s3):
     if s3:
         s3 = boto3.resource('s3')
@@ -52,6 +45,47 @@ def create_pickle_file(what_to_pickle, output_filepath, output_filename, s3):
     else:
         with open(f'{output_filepath}/{output_filename}', 'wb') as outputfile:
             pickle.dump(what_to_pickle, outputfile)
+
+
+def create_blanks(good_sentences_only):
+    fill_in_blanks = []
+    for sentence in good_sentences_only:
+        word_index = randint(3, len(word_tokenize(sentence)) - 4)
+        words_in_sentence = word_tokenize(sentence)
+        answer = words_in_sentence[word_index]  # Saving the answer before replacing it with a blank
+        words_in_sentence[word_index] = '_'  # Replacing with a blank
+        full_sentence = " ".join(words_in_sentence)
+        fill_in_blanks.append((full_sentence, answer))
+    return fill_in_blanks
+
+
+def check_if_good_sentence(row, good_sentences_only):
+    # TODO DOESN'T WORK
+    for s in row:
+        m = re.search(r'https?:|@\w+|\d', s)
+        n = re.search(r'[^A-Za-z\s!?.]', s)
+        if m or n:
+            pass
+        elif len(word_tokenize(s)) < 8:
+            pass
+        else:
+            good_sentences_only.append(s[:-1])
+
+
+def create_test_data(dataframe, input_file_path):
+    """Create test data. Input is the test part of the train_test_data function. Output is csv with input and labels."""
+    print("In create test data")
+    dataframe_no_nan = dataframe.dropna()
+    sentence_dataframe = dataframe_no_nan.apply(lambda row: tokenize.sent_tokenize(row))
+    good_sentences_only = []
+    sentence_dataframe.apply(lambda row: check_if_good_sentence(row, good_sentences_only))
+    fill_in_blanks = create_blanks(good_sentences_only)
+    with open(f'{input_file_path}/test_fill_in_the_blank.csv', 'w') as out:
+        csv_out = csv.writer(out, delimiter=',')
+        csv_out.writerow(['fill in the blank', 'answer'])
+        for row in fill_in_blanks:
+            csv_out.writerow(row)
+    logging.info("End of creating test data")
 
 
 def doInterpolatedPredictionAdd1(sen, bi_dict, vocab_dict, token_len, word_choice, param):
@@ -66,7 +100,7 @@ def doInterpolatedPredictionAdd1(sen, bi_dict, vocab_dict, token_len, word_choic
 
         prob = (param[2] * ((bi_dict[' '.join(quad_token[2:4])] + 1) / (vocab_dict[quad_token[2]] + V))
                 + param[3] * ((vocab_dict[quad_token[3]] + 1) / (token_len + V))
-        )
+                )
 
         if prob > max_prob:
             max_prob = prob
@@ -76,39 +110,3 @@ def doInterpolatedPredictionAdd1(sen, bi_dict, vocab_dict, token_len, word_choic
         return pred[1]
     else:
         return ''
-
-    #
-    # def create_test_data(self, dataframe):
-    #     """Create test data. Input is the test part of the train_test_data function. Output is csv with input and labels."""
-    #     self.log.info("in create test data")
-    #     dataframe_no_nan = dataframe.dropna()
-    #     sentence_dataframe = dataframe_no_nan.apply(lambda row: tokenize.sent_tokenize(row))
-    #     good_sentences_only = []
-    #     sentence_dataframe.apply(lambda row: self.check_if_good_sentence(row, good_sentences_only))
-    #     fill_in_blanks = self.create_blanks(good_sentences_only)
-    #     data.write_to_csv(fill_in_blanks)
-    #     logging.info("End of creating test data")
-    #     return None
-    #
-    # def create_blanks(self, good_sentences_only):
-    #     fill_in_blanks = []
-    #     for sentence in good_sentences_only:
-    #         word_index = randint(3, len(word_tokenize(sentence)) - 4)
-    #         words_in_sentence = word_tokenize(sentence)
-    #         answer = words_in_sentence[word_index]  # Saving the answer before replacing it with a blank
-    #         words_in_sentence[word_index] = '_'  # Replacing with a blank
-    #         full_sentence = " ".join(words_in_sentence)
-    #         fill_in_blanks.append((full_sentence, answer))
-    #     return fill_in_blanks
-    #
-    # def check_if_good_sentence(self, row, good_sentences_only):
-    #     # TODO DOESN'T WORK
-    #     for s in row:
-    #         m = re.search(r'https?:|@\w+|\d', s)
-    #         n = re.search(r'[^A-Za-z\s!?.]', s)
-    #         if m or n:
-    #             pass
-    #         elif len(word_tokenize(s)) < 8:
-    #             pass
-    #         else:
-    #             good_sentences_only.append(s[:-1])

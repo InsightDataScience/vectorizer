@@ -12,22 +12,20 @@ import ngram_test
 class NgramTest:
     """ This class takes in the probability files
     """
-    def __init__(self, testing_emails, output_file_path):
+    def __init__(self, input_file_path, output_file_path):
         self.log = logging.getLogger('Enron_email_analysis.ngram_test')
-
+        self.test_fill_in_the_blank = input_file_path
         self.bigram_backward_probability = pd.read_pickle(f'{output_file_path}/bigram_backward_probability.pickle')
         self.bigram_forward_probability = pd.read_pickle(f'{output_file_path}/bigram_forward_probability.pickle')
-
-        self.test_fib_dataframe = pd.read_csv('test_fill_in_the_blank.csv')
         forward_answers = []
         backward_answers = []
-        self.test_fib_dataframe['fill in the blank'].apply(
+        self.test_fill_in_the_blank['fill in the blank'].apply(
             lambda fib: self.answer_fib(fib, forward_answers, backward_answers, self.bigram_forward_probability, self.bigram_backward_probability))
-        self.test_fib_dataframe['Forward Answers'] = self.get_values(forward_answers, 1)
-        self.test_fib_dataframe['Forward Answer Probability'] = self.get_values(forward_answers, 0)
-        self.test_fib_dataframe['Backward Answers'] = self.get_values(backward_answers, 1)
-        self. test_fib_dataframe['Backward Answer Probability'] = self.get_values(backward_answers, 0)
-        self.test_fib_dataframe.to_csv(f'{output_file_path}/test_fib_answers.csv')
+        self.test_fill_in_the_blank['Forward Answers'] = self.get_values(forward_answers, 1)
+        self.test_fill_in_the_blank['Forward Answer Probability'] = self.get_values(forward_answers, 0)
+        self.test_fill_in_the_blank['Backward Answers'] = self.get_values(backward_answers, 1)
+        self.test_fill_in_the_blank['Backward Answer Probability'] = self.get_values(backward_answers, 0)
+        self.test_fill_in_the_blank.to_csv(f'{output_file_path}/test_fib_answers.csv')
 
     def answer_fib(self, fib, forward_answers, backward_answers, forward_probability, backward_probability):
         before_blank_tokens, after_blank_tokens = utilities.take_input(fib)

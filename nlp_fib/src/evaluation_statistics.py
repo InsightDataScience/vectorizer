@@ -5,9 +5,9 @@ class Evaluation:
         """
 
     def __init__(self, ngram_test, output_file_path):
-        self.correct_answer = ngram_test.test_fib_dataframe['answer']
-        self.forward_ngram_model_answer = ngram_test.test_fib_dataframe['Forward Answers']
-        self.backward_ngram_model_answer = ngram_test.test_fib_dataframe['Backward Answers']
+        self.correct_answer = ngram_test.test_fill_in_the_blank['answer']
+        self.forward_ngram_model_answer = ngram_test.test_fill_in_the_blank['Forward Answers']
+        self.backward_ngram_model_answer = ngram_test.test_fill_in_the_blank['Backward Answers']
 
         self.forward_accuracy = self.calculate_accuracy(self.correct_answer, self.forward_ngram_model_answer)
         self.backward_accuracy = self.calculate_accuracy(self.correct_answer, self.backward_ngram_model_answer)

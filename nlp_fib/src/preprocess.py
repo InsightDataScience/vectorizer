@@ -1,6 +1,7 @@
 import logging
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+import nltk
 import utilities
 
 class PreprocessText():
@@ -76,6 +77,7 @@ class PreprocessText():
 
     def remove_stop_words(self, dataframe):
         # TODO: An option to pass in a custom list of stopwords would be cool.
+        nltk.download('stopwords')
         set(stopwords.words('english'))
 
     def tokenize(self, dataframe):
