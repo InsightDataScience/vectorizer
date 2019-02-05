@@ -12,11 +12,11 @@ import ngram_test
 class NgramTest:
     """ This class takes in the probability files
     """
-    def __init__(self, input_file_path, output_file_path):
+    def __init__(self, test_file_path, output_file_path):
         self.log = logging.getLogger('Enron_email_analysis.ngram_test')
-        self.test_fill_in_the_blank = input_file_path
-        self.bigram_backward_probability = pd.read_pickle(f'{output_file_path}/bigram_backward_probability.pickle')
-        self.bigram_forward_probability = pd.read_pickle(f'{output_file_path}/bigram_forward_probability.pickle')
+        self.test_fill_in_the_blank = test_file_path
+        self.bigram_backward_probability = data.read_pickle_file(f'model_input_data/bigram_backward_probability.pickle')
+        self.bigram_forward_probability = data.read_pickle_file(f'model_input_data/bigram_forward_probability.pickle')
         forward_answers = []
         backward_answers = []
         self.test_fill_in_the_blank['fill in the blank'].apply(

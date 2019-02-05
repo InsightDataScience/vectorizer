@@ -27,7 +27,7 @@ class Evaluation:
 
     def create_summary_statistics(self, forward_accuracy, backward_accuracy, output_file_path):
 
-        summary_statistics = open(f'{output_file_path}/summary_statistics.txt', 'a')
+        summary_statistics = open(f'summary_statistics.txt', 'a')
         summary_statistics.write(f'The forward model has an accuracy of: {forward_accuracy}\n')
         summary_statistics.write(f'The backward model has an accuracy of: {backward_accuracy}\n')
         summary_statistics.close()

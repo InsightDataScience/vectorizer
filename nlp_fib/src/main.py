@@ -49,7 +49,7 @@ def main(output_file_path, input_file_path, create_train_test_data, training_dat
         log.info("Starting to train ngram model")
         training_emails = pd.read_csv(training_data_file_path)
         preprocessed_training_emails = preprocess.PreprocessText(training_emails['email_text']).preprocessed_text
-        NgramTrain(preprocessed_training_emails, output_file_path) # Done creating training data and
+        NgramTrain(preprocessed_training_emails, input_file_path) # Done creating training data and
         log.info("Successfully finished training ngram model")
 
     if run_ngram_test:
@@ -75,7 +75,7 @@ def main(output_file_path, input_file_path, create_train_test_data, training_dat
 
     end = time()
     time_difference = end - start
-    summary_statistics = open(f'{output_file_path}/summary_statistics.txt', 'a')
+    summary_statistics = open(f'summary_statistics.txt', 'a')
     summary_statistics.write(f'The program ran for: {time_difference}\n')
     summary_statistics.close()
 
