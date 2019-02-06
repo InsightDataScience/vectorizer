@@ -26,10 +26,10 @@ class NgramTrain:
         self.log.info(f'Number of words in bigram count: {len(list(self.bigram_count))}')
         data.write_pickle_file(self.bigram_count, input_file_path, 'bigram_count.pkl', True)
 
-        trigram_counter = Counter()
-        self.trigrams, self.trigram_count = self.ngram_generator_and_counter(preprocessed_dataframe, 3, trigram_counter)
-        self.log.info(f'Number of words in trigram count: {len(list(self.trigram_count))}')
-        data.write_pickle_file(self.trigram_count, input_file_path, 'trigram_count.pkl', True)
+        # trigram_counter = Counter()
+        # self.trigrams, self.trigram_count = self.ngram_generator_and_counter(preprocessed_dataframe, 3, trigram_counter)
+        # self.log.info(f'Number of words in trigram count: {len(list(self.trigram_count))}')
+        # data.write_pickle_file(self.trigram_count, input_file_path, 'trigram_count.pkl', True)
 
         self.bigram_forward_probability = Counter()
         self.ngram_probability(self.unigram_count, self.bigram_count, self.bigram_forward_probability, 'forward')
@@ -121,3 +121,4 @@ class NgramTrain:
 
 # I think the ngram probability counter has been fixed now. Next step is to rerun training and try testing.
 # Do this to check if function that reads in the probabilities works correctly
+# Run on AWS immediately

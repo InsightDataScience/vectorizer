@@ -77,10 +77,12 @@ class PreprocessText():
 
     def remove_stop_words(self, dataframe):
         # TODO: An option to pass in a custom list of stopwords would be cool.
+        logging.info('Removing stop words from text data')
         nltk.download('stopwords')
         set(stopwords.words('english'))
 
     def tokenize(self, dataframe):
+        logging.info('Tokenizing text data')
         tokenized_dataframe = dataframe.apply(lambda row: word_tokenize(row))
         return tokenized_dataframe
 
