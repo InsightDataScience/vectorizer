@@ -33,7 +33,6 @@ class NgramTest:
         forward_answers.append(self.predict_next_word(before_blank_tokens, forward_probability, 'forward'))
         backward_answers.append(self.predict_next_word(before_blank_tokens, backward_probability, 'backward'))
         # choose most probable words for prediction
-        return None
 
     def get_values(self, answers, n):
         output_list = []
@@ -57,5 +56,4 @@ class NgramTest:
             logging.info(f'Final word probabilities for {direction} direction:{sorted_probabilities[:3]}')
             return sorted_probabilities[0:10]
         else:
-            # TODO FIX THIS PART WHICH IS WHAT TO DO IF THE LOOK UP WORD IS NOT IN THE PROBABILITY
-            return ('unknown probability', 'word not in probability matrix')
+            return None # if the look up word is not in probability matrix
