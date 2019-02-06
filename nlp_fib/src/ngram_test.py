@@ -15,8 +15,8 @@ class NgramTest:
     def __init__(self, test_file_path, output_file_path):
         self.log = logging.getLogger('Enron_email_analysis.ngram_test')
         self.test_fill_in_the_blank = test_file_path
-        self.bigram_backward_probability = data.read_pickle_file(f'model_input_data/bigram_backward_probability.pickle')
-        self.bigram_forward_probability = data.read_pickle_file(f'model_input_data/bigram_forward_probability.pickle')
+        self.bigram_backward_probability = data.read_pickle_file(f'model_input_data/bigram_backward_probability.pkl')
+        self.bigram_forward_probability = data.read_pickle_file(f'model_input_data/bigram_forward_probability.pkl')
         forward_answers = []
         backward_answers = []
         self.test_fill_in_the_blank['fill in the blank'].apply(
