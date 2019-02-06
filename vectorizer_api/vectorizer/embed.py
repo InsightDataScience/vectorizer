@@ -2,7 +2,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 import numpy as np
 import spacy
 
-GLOVE_EMBEDDING = spacy.load('en_vectors_web_lg')
+# GLOVE_EMBEDDING = spacy.load('en_vectors_web_lg')
 
 def cv(df):
 	count_vectorizer = CountVectorizer()
