@@ -45,7 +45,7 @@ def main():
 
 	print('generating embeddings{}'.format(dots))
 	print('calling vectorizer api{}'.format(dots))
-	matrix_embedding = np.zeros((len(dataset), 300))
+	matrix_embedding = np.zeros((len(dataset), 400))
 	for i in range(len(dataset)):
 		text = dataset['text'][i]
 		input = {'text' : text}
