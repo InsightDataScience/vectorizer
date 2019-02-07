@@ -1,3 +1,5 @@
+# Model and script adapted from https://fredericgodin.com/software/
+
 import logging
 import word2vecReaderUtils as utils
 from numpy import exp, dot, zeros, outer, random, dtype, float32 as REAL,\
