@@ -89,8 +89,7 @@ dependencies:
   - zlib=1.2.11=h7b6447c_3
   - pip:
     - aniso8601==4.1.0
-    - en-core-web-sm==2.0.0
-    - en-vectors-web-lg==2.0.0
+    # - en-core-web-sm==2.0.0
+    # - en-vectors-web-lg==2.0.0
     - flask-restful==0.3.7
 prefix: /home/ubuntu/anaconda3/envs/nlp
-

@@ -18,7 +18,6 @@ import os
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 # current sample data setup
-EMBEDDING_MODEL = 'Pretrained 300D Wiki GloVe Model'
 DATA_PATH = '../../data/testdata.text_only.csv'
 LABEL_PATH = '../../data/renumbered_test_labels.csv'
 
@@ -50,7 +49,7 @@ def main():
 	for i in range(len(dataset)):
 		text = dataset['text'][i]
 		input = {'text' : text}
-		response = requests.get('http://0.0.0.0:5000/infer', data=input)
+		response = requests.get('http://0.0.0.0:5000/embed', data=input)
 		vector_embedding = json.loads(response.text)
 		matrix_embedding[i] = vector_embedding
 

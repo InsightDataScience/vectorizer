@@ -2,8 +2,6 @@ import sys
 import numpy as np
 import spacy
 
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-
 embedding_models_path = './vectorizer/word2vec_twitter_model'
 sys.path.append(embedding_models_path)
 
@@ -31,7 +29,8 @@ def inference_glove_embedding(preprocessed_text):
 	for i in range(len(preprocessed_text)):
 		word = preprocessed_text[i]
 		# embedding_vector = GLOVE_EMBEDDING.vocab.get_vector(word)
-		embedding_vector = TWITTER_WORD2VEC_EMBEDDING.vocab(word)
+		word_index = TWITTER_WORD2VEC_EMBEDDING.vocab[word].index
+		embedding_vector = TWITTER_WORD2VEC_EMBEDDING.syn0[word_index]
 		if embedding_vector is not None:
 			embedding_matrix[i] = embedding_vector
 
