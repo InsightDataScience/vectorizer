@@ -13,7 +13,7 @@ TWITTER_WORD2VEC_EMBEDDING = word2vecReader.Word2Vec.\
 	load_word2vec_format(TWITTER_WORD2VEC_EMBEDDING_PATH,
 	binary=True)
 # get vector dimension from sample word 'hello'
-HELLO_INDEX = WITTER_WORD2VEC_EMBEDDING.vocab['hello'].index
+HELLO_INDEX = TWITTER_WORD2VEC_EMBEDDING.vocab['hello'].index
 VECTOR_DIMENSION = len(TWITTER_WORD2VEC_EMBEDDING.syn0[HELLO_INDEX])
 # GLOVE_EMBEDDING = spacy.load('en_vectors_web_lg')
 
