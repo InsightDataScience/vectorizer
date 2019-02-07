@@ -32,8 +32,12 @@ def inference_glove_embedding(preprocessed_text):
 	for i in range(len(preprocessed_text)):
 		word = preprocessed_text[i]
 		# embedding_vector = GLOVE_EMBEDDING.vocab.get_vector(word)
-		word_index = TWITTER_WORD2VEC_EMBEDDING.vocab[word].index
-		embedding_vector = TWITTER_WORD2VEC_EMBEDDING.syn0[word_index]
+		try:
+			word_index = TWITTER_WORD2VEC_EMBEDDING.vocab[word].index
+			embedding_vector = TWITTER_WORD2VEC_EMBEDDING.syn0[word_index]
+		except KeyError:
+			print('word not in embedding')
+			embedding_vector = None
 		if embedding_vector is not None:
 			embedding_matrix[i] = embedding_vector
 
