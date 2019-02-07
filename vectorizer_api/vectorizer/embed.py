@@ -12,6 +12,9 @@ TWITTER_WORD2VEC_EMBEDDING_PATH = "./vectorizer/word2vec_twitter_model/" + \
 TWITTER_WORD2VEC_EMBEDDING = word2vecReader.Word2Vec.\
 	load_word2vec_format(TWITTER_WORD2VEC_EMBEDDING_PATH,
 	binary=True)
+# get vector dimension from sample word 'hello'
+HELLO_INDEX = WITTER_WORD2VEC_EMBEDDING.vocab['hello'].index
+VECTOR_DIMENSION = len(TWITTER_WORD2VEC_EMBEDDING.syn0[HELLO_INDEX])
 # GLOVE_EMBEDDING = spacy.load('en_vectors_web_lg')
 
 def glove_embedding(df, tokenizer):
@@ -25,7 +28,7 @@ def glove_embedding(df, tokenizer):
 	return embedding_matrix
 
 def inference_glove_embedding(preprocessed_text):
-	embedding_matrix = np.zeros((len(preprocessed_text), 300))
+	embedding_matrix = np.zeros((len(preprocessed_text), VECTOR_DIMENSION))
 	for i in range(len(preprocessed_text)):
 		word = preprocessed_text[i]
 		# embedding_vector = GLOVE_EMBEDDING.vocab.get_vector(word)
