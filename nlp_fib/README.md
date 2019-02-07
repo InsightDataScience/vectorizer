@@ -10,7 +10,7 @@ python nlp_fib/src/main.py  --output_file_path nlp_fib/output --run_ngram_test -
 
 ssh -i aws_key.pem ubuntu@ec2-54-214-100-221.us-west-2.compute.amazonaws.com
 ## Create data set
-python3 nlp_fib/src/main.py --create_train_test_data s3://pujaa-rajan-enron-email-data/raw_email_data/enron_emails.csv --output_file_path s3://pujaa-rajan-enron-email-data/model_output_data --input_file_path  s3://pujaa-rajan-enron-email-data/model_input_data
+python3 nlp_fib/src/main.py --create_train_test_data s3://pujaa-rajan-enron-email-data/raw_email_data/enron_sample_1k.csv --output_file_path s3://pujaa-rajan-enron-email-data/model_output_data --input_file_path  s3://pujaa-rajan-enron-email-data/model_input_data
 ## Training model
 python3 nlp_fib/src/main.py  --input_file_path s3://pujaa-rajan-enron-email-data/model_input_data --run_ngram_train --training_data_file_path s3://pujaa-rajan-enron-email-data/model_input_data/training_email_data.csv
 ## Testing model

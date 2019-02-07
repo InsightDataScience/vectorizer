@@ -25,6 +25,7 @@ class NgramTest:
         self.test_fill_in_the_blank['Forward Answer Probability'] = self.get_values(forward_answers, 0)
         self.test_fill_in_the_blank['Backward Answers'] = self.get_values(backward_answers, 1)
         self.test_fill_in_the_blank['Backward Answer Probability'] = self.get_values(backward_answers, 0)
+        self.test_fill_in_the_blank.dropna(inplace=True)
         self.test_fill_in_the_blank.to_csv(f'{output_file_path}/test_fib_answers.csv')
 
     def answer_fib(self, fib, forward_answers, backward_answers, forward_probability, backward_probability):
@@ -37,7 +38,14 @@ class NgramTest:
     def get_values(self, answers, n):
         output_list = []
         for sentence_answers in answers:
-            output_list.append([i[n] for i in sentence_answers])
+            if sentence_answers is not None:
+                sentence_list = []
+                for word_probability in sentence_answers:
+                    if word_probability is not None:
+                        sentence_list.append(word_probability[n])
+                output_list.append(sentence_list)
+            else:
+                output_list.append(None)
         return output_list
 
     def predict_next_word(self, words_before_or_after_blank, bigram_probability, direction):
