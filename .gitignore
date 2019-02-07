@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 .ipynb_checkpoints
 *.csv
+*.bin
 !data/renumbered_test_labels.csv
 !data/test_labels.csv
 !data/testdata.manual.2009.06.14.csv

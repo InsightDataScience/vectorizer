@@ -1,6 +1,5 @@
 from vectorizer import app
 from flask import Flask, flash, request, redirect, url_for, jsonify
-from flask import render_template
 from flask_restful import Resource, Api
 from werkzeug.utils import secure_filename
 
@@ -13,38 +12,12 @@ from vectorizer import embed
 UPLOAD_FOLDER = '/path/to/the/uploads'
 ALLOWED_EXTENSIONS = set(['csv'])
 
-@app.route('/')
-@app.route('/index')
-def index():
-    return render_template('master.html')
-
-@app.route('/go')
-def go():
-    query = request.args.get('query', '')
-    text = request.form.get('text')
-    return render_template(
-        'go.html',
-        query=text,
-    )
-
 @app.route('/embed', methods=['GET', 'POST'])
 def infer():
-    web_app_query = request.args.get('query', '')
-    api_query = request.form.get('text')
-
-    if api_query is None:
-        text = web_app_query
-    else:
-        text = api_query
+    text = request.form.get('text')
 
     # cleaning
     cleaned_text = clean.clean_str(text)
-
-    render_template(
-        'go.html',
-        query=cleaned_text,
-    )
-    return
 
     # preprocessing
     preprocessed_text = preprocess.inference_tokenize(cleaned_text)
