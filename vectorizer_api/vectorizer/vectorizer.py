@@ -15,6 +15,7 @@ ALLOWED_EXTENSIONS = set(['csv'])
 @app.route('/embed', methods=['GET', 'POST'])
 def infer():
     text = request.form.get('text')
+    averaged_embedding = request.form.get('averaged_embedding')
 
     # cleaning
     cleaned_text = clean.clean_str(text)
@@ -23,7 +24,8 @@ def infer():
     preprocessed_text = preprocess.inference_tokenize(cleaned_text)
 
     # embedding
-    embedded_text = embed.inference_glove_embedding(preprocessed_text)
+    embedded_text = embed.inference_glove_embedding(preprocessed_text,
+        averaged_embedding)
 
     # convert to list in order to jsonify
     embedded_text_list = embedded_text.tolist()

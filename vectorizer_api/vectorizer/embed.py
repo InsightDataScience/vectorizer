@@ -17,17 +17,17 @@ HELLO_INDEX = TWITTER_WORD2VEC_EMBEDDING.vocab['hello'].index
 VECTOR_DIMENSION = len(TWITTER_WORD2VEC_EMBEDDING.syn0[HELLO_INDEX])
 # GLOVE_EMBEDDING = spacy.load('en_vectors_web_lg')
 
-def glove_embedding(df, tokenizer):
-	embedding_matrix = np.zeros((vocab_size, 300))
-	nlp = spacy.load('en_vectors_web_lg')
-	for word, i in tokenizer.word_index.items():
-		embedding_vector = nlp.vocab.get_vector(word)
-		if embedding_vector is not None:
-			embedding_matrix[i] = embedding_vector
+# def glove_embedding(df, tokenizer):
+# 	embedding_matrix = np.zeros((vocab_size, 300))
+# 	nlp = spacy.load('en_vectors_web_lg')
+# 	for word, i in tokenizer.word_index.items():
+# 		embedding_vector = nlp.vocab.get_vector(word)
+# 		if embedding_vector is not None:
+# 			embedding_matrix[i] = embedding_vector
+#
+# 	return embedding_matrix
 
-	return embedding_matrix
-
-def inference_glove_embedding(preprocessed_text):
+def inference_glove_embedding(preprocessed_text, averaged_embedding=True):
 	embedding_matrix = np.zeros((len(preprocessed_text), VECTOR_DIMENSION))
 	for i in range(len(preprocessed_text)):
 		word = preprocessed_text[i]
@@ -42,5 +42,7 @@ def inference_glove_embedding(preprocessed_text):
 			embedding_matrix[i] = embedding_vector
 
 	# using float to ensure accuracy
-	averaged_embedding = np.mean(embedding_matrix, axis=0, dtype=np.float64)
-	return averaged_embedding
+	if averaged_embedding:
+		embedding_matrix = np.mean(embedding_matrix, axis=0, dtype=np.float64)
+
+	return embedding_matrix
