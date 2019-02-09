@@ -16,6 +16,7 @@ import word2vecReader
 # HELLO_INDEX = TWITTER_WORD2VEC_EMBEDDING.vocab['hello'].index
 # VECTOR_DIMENSION = len(TWITTER_WORD2VEC_EMBEDDING.syn0[HELLO_INDEX])
 GLOVE_EMBEDDING = spacy.load('en_vectors_web_lg')
+VECTOR_DIMENSION = len(GLOVE_EMBEDDING.vocab.get_vector('hello'))
 
 # def glove_embedding(df, tokenizer):
 # 	embedding_matrix = np.zeros((vocab_size, 300))
