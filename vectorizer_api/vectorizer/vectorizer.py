@@ -12,20 +12,20 @@ from vectorizer import embed
 UPLOAD_FOLDER = '/path/to/the/uploads'
 ALLOWED_EXTENSIONS = set(['csv'])
 
-@app.route('/infer', methods=['GET', 'POST'])
+@app.route('/embed', methods=['GET', 'POST'])
 def infer():
     text = request.form.get('text')
+    averaged_embedding = request.form.get('averaged_embedding')
 
     # cleaning
-    text = clean.remove_URL(text)
-    text = clean.remove_special_characters(text)
-    cleaned_text = clean.lowercase(text)
+    cleaned_text = clean.clean_str(text)
 
     # preprocessing
     preprocessed_text = preprocess.inference_tokenize(cleaned_text)
 
     # embedding
-    embedded_text = embed.inference_glove_embedding(preprocessed_text)
+    embedded_text = embed.inference_glove_embedding(preprocessed_text,
+        averaged_embedding)
 
     # convert to list in order to jsonify
     embedded_text_list = embedded_text.tolist()
