@@ -1,6 +1,6 @@
 from vectorizer import app
-from flask import Flask, flash, request, redirect, url_for, jsonify
-from flask_restful import Resource, Api
+from flask import Flask, request, jsonify
+# from flask_restful import Resource, Api
 from werkzeug.utils import secure_filename
 
 import spacy
@@ -30,21 +30,6 @@ def infer():
     # convert to list in order to jsonify
     embedded_text_list = embedded_text.tolist()
     return jsonify(embedded_text_list)
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@app.route('/train', methods=['GET', 'POST'])
-def train():
-    if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-    print(type(file))
-    return 'file upload successful'
 
 if __name__ == '__main__':
     app.run(debug=True)

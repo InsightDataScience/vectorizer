@@ -1,10 +1,11 @@
-# vectorizer
+# Vectorizer
 
 Vectorizer is a natural language vectorization tool that allows users to get vectors for their text inputs. It utilizes the most common practices to clean, process, and embed input data to generate vectors.
 
 Vectorizer is currently serving as a RESFUl API.
 
 [Here](http://bit.ly/vectorizer_slides) are the slides for project Vectorizer.
+
 ---
 ## Setup Environment
 The following setup instructions is for if you want to clone the repo to run locally. If you would like to use the API service directly, refer to [API call instructions](#api-call-instructions).
