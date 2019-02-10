@@ -16,20 +16,17 @@ python3 nlp_fib/src/main.py  --input_file_path s3://pujaa-rajan-enron-email-data
 ## Testing model
 python3 nlp_fib/src/main.py  --output_file_path s3://pujaa-rajan-enron-email-data/model_output_data --run_ngram_test --testing_data_file_path s3://pujaa-rajan-enron-email-data/model_input_data/testing_email_data.csv 
 
+#C:LI
+
+
+
+
 AWS Run commands
 ps -ef | grep python3
 
 To Do:
     
-1. Add trigram and quadgram to bigram model
-2. Get Validation numbers
-3. Perplexity
+1. Delete trigram
+2. Use CLI for Demo
+3. Get validation stats on full data set
 4. Use word vectors on output and use cosign similarity to calculate most similar words
-
-Presentation:
-1. Create data pipeline slide
-2. Add validation chart and graphs
-3. Include initial statistics about input data set
-4. Give 5 examples of this being used in the professional space
-5. Extensibility and Scalability
-6. Add slide saying what you learned - google ngrams

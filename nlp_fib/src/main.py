@@ -10,10 +10,12 @@ from ngram_train import NgramTrain
 import pandas as pd
 from time import time
 import evaluation_statistics
-import evaluation_statistics
 from ngram_test import NgramTest
 from sklearn.model_selection import train_test_split
 
+
+__author__ = "Pujaa Rajan"
+__email__ = "pujaa.rajan@gmail.com"
 
 @click.command()
 @click.option('--output_file_path', is_flag=False, required=False, help = "output")
@@ -61,17 +63,28 @@ def main(output_file_path, input_file_path, create_train_test_data, training_dat
 
     # TODO Add loop so users can answer questions multiple times
     if cli:
-        preprocessed_data = preprocess.PreprocessText(email_content).preprocessed_text
-        ngram_data = ngram.Ngram(preprocessed_data)
-        #take user input
-        before_blank_tokens, after_blank_tokens = utilities.take_input('cli')
-        log.info(f'Before blank words: {before_blank_tokens}')
-        log.info(f'After blank words: {after_blank_tokens}')
+        log.info("Starting to reading in forward and backward probability pickle files")
+        bigram_forward_probability = data.read_pickle_file(f'model_input_data/bigram_forward_probability.pkl')
+        log.info("Successfully finished reading in 1/4 pickle files.")
+        bigram_backward_probability = data.read_pickle_file(f'model_input_data/bigram_backward_probability.pkl')
+        log.info("Successfully finished reading in 2/4 pickle files.")
 
-        ### PREDICTION
-        predict_next_word(before_blank_tokens, ngram_data.bigram_forward_probability, 'forward')
-        predict_next_word(before_blank_tokens, ngram_data.bigram_backward_probability, 'backward')
-        #choose most probable words for prediction
+        trigram_forward_probability = data.read_pickle_file(f'model_input_data/trigram_forward_probability.pkl')
+        log.info("Successfully finished reading in 3/4 pickle files.")
+        trigram_backward_probability = data.read_pickle_file(f'model_input_data/trigram_backward_probability.pkl')
+        log.info("Successfully finished reading in 4/4 pickle files.")
+
+        while True:
+            log.info('Ready for user input')
+            before_blank_tokens, after_blank_tokens = utilities.take_input('cli')
+            log.info(f'Before blank words: {before_blank_tokens}')
+            log.info(f'After blank words: {after_blank_tokens}')
+            after_predictions = data.predict_next_word(before_blank_tokens, bigram_forward_probability, trigram_forward_probability, 'forward')
+            before_predictions = data.predict_next_word(after_blank_tokens, bigram_backward_probability, trigram_backward_probability, 'backward')
+            print(f'After predictions {after_predictions}')
+            print(f'Before predictions {before_predictions}')
+            print(data.merge_predictions(after_predictions, before_predictions))
+
 
     end = time()
     time_difference = end - start

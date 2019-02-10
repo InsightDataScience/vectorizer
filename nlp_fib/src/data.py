@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 import logging
-from pathlib import Path
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from nltk import tokenize
 import re
 from nltk.tokenize import word_tokenize
 from random import randint
-import preprocess
-import csv
 import pickle
 import boto3
 from io import BytesIO
+import utilities
 
+__author__ = "Pujaa Rajan"
+__email__ = "pujaa.rajan@gmail.com"
 
 log = logging.getLogger('Enron_email_analysis.data')
 
@@ -95,6 +95,14 @@ def create_test_data(dataframe, input_file_path):
     logging.info("End of creating test data")
 
 
+
+
+def merge_predictions(forward_predictions, backward_predictions):
+    merged_predictions = forward_predictions + backward_predictions
+    print(merged_predictions)
+    return merged_predictions
+
+
 def doInterpolatedPredictionAdd1(sen, bi_dict, vocab_dict, token_len, word_choice, param):
     # TODO How to pick just one word?
     pred = ''
@@ -117,3 +125,35 @@ def doInterpolatedPredictionAdd1(sen, bi_dict, vocab_dict, token_len, word_choic
         return pred[1]
     else:
         return ''
+
+
+def predict_next_word(words_before_or_after_blank, bigram_probability, trigram_probability, direction):
+    if direction == 'forward':
+        logging.info('Predicting the next word using a FORWARD n gram model.')
+        look_up_unigram = words_before_or_after_blank[-1] # Start with word right before blank
+        look_up_bigram = words_before_or_after_blank[-2:] # Start with 2 words right before blank
+    elif direction == 'backward':
+        logging.info('Predicting the next word using a BACKWARD n gram model.')
+        look_up_unigram = words_before_or_after_blank[0]  # Start with first word after blank
+        look_up_bigram = words_before_or_after_blank[:2] # Start with first two words after blank
+
+    else:
+        raise RuntimeError('Specify direction as forward or backward for ngram_probability function.')
+        # ? Is this the right error to raise?
+    if look_up_unigram in bigram_probability:
+        bigram_answers = bigram_probability[look_up_unigram]
+        if tuple(look_up_bigram) in trigram_probability:
+            trigram_answers = trigram_probability[tuple(look_up_bigram)]
+            if bigram_answers and trigram_answers:
+                answers = bigram_answers + trigram_answers
+                sorted_probabilities = sorted(answers, key=lambda x: x[0], reverse=True)
+                all_answers = sorted_probabilities[0:10]
+                logging.info(f'Final word probabilities for {direction} direction:{all_answers[:3]}')
+                return all_answers
+        else:
+            sorted_probabilities = sorted(bigram_answers, key=lambda x: x[0], reverse=True)
+            return sorted_probabilities[0:10]
+    else:
+        return None # if the look up word is not in probability matrix
+
+

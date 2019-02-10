@@ -1,5 +1,8 @@
 from sklearn.metrics import accuracy_score
 
+__author__ = "Pujaa Rajan"
+__email__ = "pujaa.rajan@gmail.com"
+
 class Evaluation:
     """ This class takes in the probability files
         """
