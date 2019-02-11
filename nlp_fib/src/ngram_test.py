@@ -58,7 +58,7 @@ class NgramTest:
         return output_list
 
     def answer_fib_file(self, fib, forward_answers, backward_answers, merged_answers, bigram_forward_probability, bigram_backward_probability, trigram_forward_probability, trigram_backward_probability):
-        before_blank_tokens, after_blank_tokens = utilities.take_input(fib)
+        before_blank_tokens, after_blank_tokens, word_to_replace = utilities.take_input(fib)
         predicted_forward_words = data.predict_next_word(before_blank_tokens, bigram_forward_probability, trigram_forward_probability, 'forward')
         forward_answers.append(predicted_forward_words)
         predicted_backward_words = data.predict_next_word(after_blank_tokens, bigram_backward_probability, trigram_backward_probability, 'backward')
