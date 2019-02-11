@@ -12,6 +12,7 @@ from time import time
 import evaluation_statistics
 from ngram_test import NgramTest
 from sklearn.model_selection import train_test_split
+import gensim.downloader as api
 
 
 __author__ = "Pujaa Rajan"
@@ -61,8 +62,10 @@ def main(output_file_path, input_file_path, create_train_test_data, training_dat
         evaluation_statistics.Evaluation(ngram_test, output_file_path)
         log.info("Successfully finished testing ngram model")
 
-    # TODO Add loop so users can answer questions multiple times
     if cli:
+        log.info("Welcome to the Personalized Thesaurus.")
+        log.info("ABOUT: This thesaurus recommends you the best word based on your previous emails and the"
+                 "\nmost similar word.")
         log.info("Starting to reading in forward and backward probability pickle files")
         bigram_forward_probability = data.read_pickle_file(f'model_input_data/bigram_forward_probability.pkl')
         log.info("Successfully finished reading in 1/4 pickle files.")
@@ -74,16 +77,25 @@ def main(output_file_path, input_file_path, create_train_test_data, training_dat
         trigram_backward_probability = data.read_pickle_file(f'model_input_data/trigram_backward_probability.pkl')
         log.info("Successfully finished reading in 4/4 pickle files.")
 
+        word_vectors = api.load("glove-wiki-gigaword-100")
+
         while True:
             log.info('Ready for user input')
-            before_blank_tokens, after_blank_tokens = utilities.take_input('cli')
-            log.info(f'Before blank words: {before_blank_tokens}')
-            log.info(f'After blank words: {after_blank_tokens}')
+
+            before_blank_tokens, after_blank_tokens, word_to_replace = utilities.take_input('cli')
+            log.info(f'Before the word to replace: {before_blank_tokens}')
+            log.info(f'After the word to replace: {after_blank_tokens}')
             after_predictions = data.predict_next_word(before_blank_tokens, bigram_forward_probability, trigram_forward_probability, 'forward')
             before_predictions = data.predict_next_word(after_blank_tokens, bigram_backward_probability, trigram_backward_probability, 'backward')
-            print(f'After predictions {after_predictions}')
-            print(f'Before predictions {before_predictions}')
-            print(data.merge_predictions(after_predictions, before_predictions))
+            merged_predictions = after_predictions+before_predictions
+            word_embedding_output = data.get_similar_words(word_to_replace, word_vectors)
+            log.info('---------------------------------------------------\nOUTPUT\n---------------------------------------------')
+            print(f'Personalized Output:')
+            for probability, word in merged_predictions:
+                print(word + '\t' + str(probability))
+            print(f'Similar Words:')
+            for word, probability  in word_embedding_output:
+                print(word + '\t' + str(probability))
 
 
     end = time()

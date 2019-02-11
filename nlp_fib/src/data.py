@@ -11,6 +11,7 @@ import boto3
 from io import BytesIO
 import utilities
 
+
 __author__ = "Pujaa Rajan"
 __email__ = "pujaa.rajan@gmail.com"
 
@@ -95,36 +96,10 @@ def create_test_data(dataframe, input_file_path):
     logging.info("End of creating test data")
 
 
-
-
 def merge_predictions(forward_predictions, backward_predictions):
     merged_predictions = forward_predictions + backward_predictions
     print(merged_predictions)
     return merged_predictions
-
-
-def doInterpolatedPredictionAdd1(sen, bi_dict, vocab_dict, token_len, word_choice, param):
-    # TODO How to pick just one word?
-    pred = ''
-    max_prob = 0.0
-    V = len(vocab_dict)
-    # for each word choice find the interpolated probability and decide
-    for word in word_choice:
-        key = sen + ' ' + word[1]
-        quad_token = key.split()
-
-        prob = (param[2] * ((bi_dict[' '.join(quad_token[2:4])] + 1) / (vocab_dict[quad_token[2]] + V))
-                + param[3] * ((vocab_dict[quad_token[3]] + 1) / (token_len + V))
-                )
-
-        if prob > max_prob:
-            max_prob = prob
-            pred = word
-    # return only pred to get word with its prob
-    if pred:
-        return pred[1]
-    else:
-        return ''
 
 
 def predict_next_word(words_before_or_after_blank, bigram_probability, trigram_probability, direction):
@@ -157,3 +132,9 @@ def predict_next_word(words_before_or_after_blank, bigram_probability, trigram_p
         return None # if the look up word is not in probability matrix
 
 
+def get_similar_words(word, word_vectors):
+    try:
+        result = word_vectors.similar_by_word(word, topn=10)
+        return result
+    except KeyError:
+        return None

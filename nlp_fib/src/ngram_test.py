@@ -3,6 +3,7 @@ import pandas as pd
 import utilities
 import data
 import logging
+import gensim.downloader as api
 
 __author__ = "Pujaa Rajan"
 __email__ = "pujaa.rajan@gmail.com"
@@ -22,12 +23,24 @@ class NgramTest:
 
         forward_answers = []
         backward_answers = []
+        merged_answers = []
         self.test_fill_in_the_blank['fill in the blank'].apply(
-            lambda fib: self.answer_fib(fib, forward_answers, backward_answers, self.bigram_forward_probability, self.bigram_backward_probability, self.trigram_forward_probability, self.trigram_backward_probability))
+            lambda fib: self.answer_fib_file(fib, forward_answers, backward_answers, merged_answers, self.bigram_forward_probability, self.bigram_backward_probability, self.trigram_forward_probability, self.trigram_backward_probability))
+
         self.test_fill_in_the_blank['Forward Answers'] = self.get_values(forward_answers, 1)
         self.test_fill_in_the_blank['Forward Answer Probability'] = self.get_values(forward_answers, 0)
         self.test_fill_in_the_blank['Backward Answers'] = self.get_values(backward_answers, 1)
         self.test_fill_in_the_blank['Backward Answer Probability'] = self.get_values(backward_answers, 0)
+
+        self.test_fill_in_the_blank['Merged Ngram Answers'] = self.get_values(merged_answers, 1)
+        self.test_fill_in_the_blank['Merged Ngram Probability'] = self.get_values(merged_answers, 0)
+        word_vectors = api.load("glove-wiki-gigaword-100")
+
+        word2vec_answers = self.test_fill_in_the_blank['answer'].apply(lambda row: data.get_similar_words(row, word_vectors)).to_list()
+
+        self.test_fill_in_the_blank['Word2Vec Similar Words'] = self.get_values(word2vec_answers, 0)
+        self.test_fill_in_the_blank['Word2Vec Probability'] = self.get_values(word2vec_answers, 1)
+
         self.test_fill_in_the_blank.dropna(inplace=True)
         self.test_fill_in_the_blank.to_csv(f'{output_file_path}/test_fib_answers.csv')
 
@@ -44,9 +57,19 @@ class NgramTest:
                 output_list.append(None)
         return output_list
 
-    def answer_fib_file(self, fib, forward_answers, backward_answers, bigram_forward_probability, bigram_backward_probability, trigram_forward_probability, trigram_backward_probability):
-    ### PREDICTION
+    def answer_fib_file(self, fib, forward_answers, backward_answers, merged_answers, bigram_forward_probability, bigram_backward_probability, trigram_forward_probability, trigram_backward_probability):
         before_blank_tokens, after_blank_tokens = utilities.take_input(fib)
-        forward_answers.append(data.predict_next_word(before_blank_tokens, bigram_forward_probability, trigram_forward_probability, 'forward'))
-        backward_answers.append(data.predict_next_word(after_blank_tokens, bigram_backward_probability, trigram_backward_probability, 'backward'))        # choose most probable words for prediction
+        predicted_forward_words = data.predict_next_word(before_blank_tokens, bigram_forward_probability, trigram_forward_probability, 'forward')
+        forward_answers.append(predicted_forward_words)
+        predicted_backward_words = data.predict_next_word(after_blank_tokens, bigram_backward_probability, trigram_backward_probability, 'backward')
+        backward_answers.append(predicted_backward_words)        # choose most probable words for prediction
+        if predicted_forward_words and predicted_backward_words:
+            temp_merge_answers = predicted_forward_words + predicted_backward_words
+            no_nones_merge_answers = [x for x in temp_merge_answers if x is not None]
+            sorted_merged_answers = sorted(no_nones_merge_answers, key=lambda x: x[0], reverse=True)
+            merged_answers.append(sorted_merged_answers)
+        else:
+            merged_answers.append(None)
+
+
 

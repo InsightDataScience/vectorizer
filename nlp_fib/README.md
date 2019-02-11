@@ -16,7 +16,7 @@ python3 nlp_fib/src/main.py  --input_file_path s3://pujaa-rajan-enron-email-data
 ## Testing model
 python3 nlp_fib/src/main.py  --output_file_path s3://pujaa-rajan-enron-email-data/model_output_data --run_ngram_test --testing_data_file_path s3://pujaa-rajan-enron-email-data/model_input_data/testing_email_data.csv 
 
-#C:LI
+#CLI
 
 
 

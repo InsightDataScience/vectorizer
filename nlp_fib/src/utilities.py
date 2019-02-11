@@ -35,12 +35,15 @@ def logger():
 
 def take_input(fib):
     if fib == 'cli':
-        fib = input('Enter the string\n')
-    # ? We may need to remove puncuation from the input
-    before_and_after_blank = fib.split("_")
+        sentence = input('Enter a sentence without any punctuation.\n')
+        word_to_replace = input('Enter the word you want to replace.\n')
+    logging.info(f'User Input Sentence: {sentence}')
+    logging.info(f'User Input Word to Replace: {word_to_replace}')
+    sentence_w_blank = sentence.replace(word_to_replace, '_')
+    before_and_after_blank = sentence_w_blank.split('_')
     before_blank_tokens = before_and_after_blank[0].split()[-3:]
 
     after_blank_tokens = before_and_after_blank[1].split()[:3]
     if len(before_blank_tokens) < 3 or len(after_blank_tokens) < 3:
         print("Please enter at least 3 words before and after the blank!")
-    return before_blank_tokens, after_blank_tokens
+    return before_blank_tokens, after_blank_tokens, word_to_replace
