@@ -2,62 +2,74 @@ import data
 import pandas as pd
 import utilities
 import data
-from random import randint
-from nltk import tokenize, word_tokenize
 import logging
-import re
-import ngram_test
+import gensim.downloader as api
 
+__author__ = "Pujaa Rajan"
+__email__ = "pujaa.rajan@gmail.com"
 
 class NgramTest:
     """ This class takes in the probability files
     """
-    def __init__(self, testing_emails, output_file_path):
+    def __init__(self, test_file_path, output_file_path):
         self.log = logging.getLogger('Enron_email_analysis.ngram_test')
+        self.test_fill_in_the_blank = test_file_path
 
-        self.bigram_backward_probability = pd.read_pickle(f'{output_file_path}/bigram_backward_probability.pickle')
-        self.bigram_forward_probability = pd.read_pickle(f'{output_file_path}/bigram_forward_probability.pickle')
+        self.bigram_forward_probability = data.read_pickle_file(f'model_input_data/bigram_forward_probability.pkl')
+        self.bigram_backward_probability = data.read_pickle_file(f'model_input_data/bigram_backward_probability.pkl')
 
-        self.test_fib_dataframe = pd.read_csv('test_fill_in_the_blank.csv')
+        self.trigram_forward_probability = data.read_pickle_file(f'model_input_data/trigram_forward_probability.pkl')
+        self.trigram_backward_probability = data.read_pickle_file(f'model_input_data/trigram_backward_probability.pkl')
+
         forward_answers = []
         backward_answers = []
-        self.test_fib_dataframe['fill in the blank'].apply(
-            lambda fib: self.answer_fib(fib, forward_answers, backward_answers, self.bigram_forward_probability, self.bigram_backward_probability))
-        self.test_fib_dataframe['Forward Answers'] = self.get_values(forward_answers, 1)
-        self.test_fib_dataframe['Forward Answer Probability'] = self.get_values(forward_answers, 0)
-        self.test_fib_dataframe['Backward Answers'] = self.get_values(backward_answers, 1)
-        self. test_fib_dataframe['Backward Answer Probability'] = self.get_values(backward_answers, 0)
-        self.test_fib_dataframe.to_csv(f'{output_file_path}/test_fib_answers.csv')
+        merged_answers = []
+        self.test_fill_in_the_blank['fill in the blank'].apply(
+            lambda fib: self.answer_fib_file(fib, forward_answers, backward_answers, merged_answers, self.bigram_forward_probability, self.bigram_backward_probability, self.trigram_forward_probability, self.trigram_backward_probability))
 
-    def answer_fib(self, fib, forward_answers, backward_answers, forward_probability, backward_probability):
-        before_blank_tokens, after_blank_tokens = utilities.take_input(fib)
-        ### PREDICTION
-        forward_answers.append(self.predict_next_word(before_blank_tokens, forward_probability, 'forward'))
-        backward_answers.append(self.predict_next_word(before_blank_tokens, backward_probability, 'backward'))
-        # choose most probable words for prediction
-        return None
+        self.test_fill_in_the_blank['Forward Answers'] = self.get_values(forward_answers, 1)
+        self.test_fill_in_the_blank['Forward Answer Probability'] = self.get_values(forward_answers, 0)
+        self.test_fill_in_the_blank['Backward Answers'] = self.get_values(backward_answers, 1)
+        self.test_fill_in_the_blank['Backward Answer Probability'] = self.get_values(backward_answers, 0)
+
+        self.test_fill_in_the_blank['Merged Ngram Answers'] = self.get_values(merged_answers, 1)
+        self.test_fill_in_the_blank['Merged Ngram Probability'] = self.get_values(merged_answers, 0)
+        word_vectors = api.load("glove-wiki-gigaword-100")
+
+        word2vec_answers = self.test_fill_in_the_blank['answer'].apply(lambda row: data.get_similar_words(row, word_vectors)).to_list()
+
+        self.test_fill_in_the_blank['Word2Vec Similar Words'] = self.get_values(word2vec_answers, 0)
+        self.test_fill_in_the_blank['Word2Vec Probability'] = self.get_values(word2vec_answers, 1)
+
+        self.test_fill_in_the_blank.dropna(inplace=True)
+        self.test_fill_in_the_blank.to_csv(f'{output_file_path}/test_fib_answers.csv')
 
     def get_values(self, answers, n):
         output_list = []
         for sentence_answers in answers:
-            output_list.append([i[n] for i in sentence_answers])
+            if sentence_answers is not None:
+                sentence_list = []
+                for word_probability in sentence_answers:
+                    if word_probability is not None:
+                        sentence_list.append(word_probability[n])
+                output_list.append(sentence_list)
+            else:
+                output_list.append(None)
         return output_list
 
-    def predict_next_word(self, words_before_or_after_blank, bigram_probability, direction):
-        if direction == 'forward':
-            logging.info('Predicting the next word using a FORWARD n gram model.')
-            look_up_word = words_before_or_after_blank[-1]  # Start with word right before blank
-        elif direction == 'backward':
-            logging.info('Predicting the next word using a BACKWARD n gram model.')
-            look_up_word = words_before_or_after_blank[0]  # Start with first word after blank
+    def answer_fib_file(self, fib, forward_answers, backward_answers, merged_answers, bigram_forward_probability, bigram_backward_probability, trigram_forward_probability, trigram_backward_probability):
+        before_blank_tokens, after_blank_tokens = utilities.take_input(fib)
+        predicted_forward_words = data.predict_next_word(before_blank_tokens, bigram_forward_probability, trigram_forward_probability, 'forward')
+        forward_answers.append(predicted_forward_words)
+        predicted_backward_words = data.predict_next_word(after_blank_tokens, bigram_backward_probability, trigram_backward_probability, 'backward')
+        backward_answers.append(predicted_backward_words)        # choose most probable words for prediction
+        if predicted_forward_words and predicted_backward_words:
+            temp_merge_answers = predicted_forward_words + predicted_backward_words
+            no_nones_merge_answers = [x for x in temp_merge_answers if x is not None]
+            sorted_merged_answers = sorted(no_nones_merge_answers, key=lambda x: x[0], reverse=True)
+            merged_answers.append(sorted_merged_answers)
         else:
-            raise RuntimeError('Specify direction as forward or backward for ngram_probability function.')
-            # ? Is this the right error to raise?
-        if look_up_word in bigram_probability:
-            token_probabilities = bigram_probability[look_up_word]
-            sorted_probabilities = sorted(token_probabilities, key=lambda x: x[0], reverse=True)
-            logging.info(f'Final word probabilities for {direction} direction:{sorted_probabilities[:3]}')
-            return sorted_probabilities[0:10]
-        else:
-            # TODO FIX THIS PART WHICH IS WHAT TO DO IF THE LOOK UP WORD IS NOT IN THE PROBABILITY
-            return ('unknown probability', 'word not in probability matrix')
+            merged_answers.append(None)
+
+
+

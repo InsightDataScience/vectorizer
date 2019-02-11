@@ -4,3 +4,8 @@ __pycache__/
 .ipynb_checkpoints
 *.csv
 *.md
+*.bin
+!data/renumbered_test_labels.csv
+!data/test_labels.csv
+!data/testdata.manual.2009.06.14.csv
+!data/testdata.text_only.csv

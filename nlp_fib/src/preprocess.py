@@ -1,6 +1,7 @@
 import logging
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+import nltk
 import utilities
 
 class PreprocessText():
@@ -30,7 +31,7 @@ class PreprocessText():
 
         dataframe6 = self.remove_special_characters(dataframe5)
         dataframe7 = self.remove_numbers(dataframe6)
-        self.remove_stop_words(dataframe7) # Doesn't return anything for now
+        self.remove_stop_words()
         dataframe8 = self.tokenize(dataframe7)
 
         self.log.info(f'Successfully finished pre-processing text data.')
@@ -74,11 +75,14 @@ class PreprocessText():
         no_numbers = dataframe.str.replace('\d+', '')
         return no_numbers
 
-    def remove_stop_words(self, dataframe):
+    def remove_stop_words(self):
         # TODO: An option to pass in a custom list of stopwords would be cool.
+        logging.info('Removing stop words from text data')
+        nltk.download('stopwords')
         set(stopwords.words('english'))
 
     def tokenize(self, dataframe):
+        logging.info('Tokenizing text data')
         tokenized_dataframe = dataframe.apply(lambda row: word_tokenize(row))
         return tokenized_dataframe
 
