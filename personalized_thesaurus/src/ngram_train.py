@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import logging
 from nltk.util import ngrams
 import nltk
@@ -143,7 +146,6 @@ class NgramTrain:
                 last_ngram_token = trigram_token[-1]  # Take the second word
             elif direction == 'backward':
                 last_ngram_token = trigram_token[0]
-                print(last_ngram_token)
 
             # bi_prob_dict is a dict of list and if the unigram sentence is not present in the Dictionary then add it
             if bigram_token not in trigram_probability: # Ngram probability is a counter

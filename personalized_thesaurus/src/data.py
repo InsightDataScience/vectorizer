@@ -1,16 +1,16 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import logging
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from nltk import tokenize
-import re
-from nltk.tokenize import word_tokenize
-from random import randint
-import pickle
-import boto3
-from io import BytesIO
-import utilities
 
+import logging
+import pickle
+import re
+from io import BytesIO
+from random import randint
+
+import boto3
+import pandas as pd
+from nltk import word_tokenize, tokenize
+from sklearn.model_selection import train_test_split
 
 __author__ = "Pujaa Rajan"
 __email__ = "pujaa.rajan@gmail.com"
@@ -19,11 +19,7 @@ log = logging.getLogger('Enron_email_analysis.data')
 
 
 def read_data(input_filepath):
-    """Reads in data from csv file or s3 bucket.
-
-    # TODO: Add descriptive statistics about emails and create some graphs that you can save.
-    # TODO: Add reading in guard rails and properties. More specific exception?
-    """
+    """ Reads in data from csv file or s3 bucket. """
     logging.info(f'Starting to read in raw data from {input_filepath} (may be CSV or s3)')
     try:
         dataframe = pd.read_csv(input_filepath)
@@ -37,11 +33,17 @@ def read_data(input_filepath):
 
 
 def train_test_data(dataframe):
-    training_emails, testing_emails = train_test_split(dataframe, test_size=.2, train_size=.8, shuffle=True)
-    return training_emails, testing_emails
+    """ Splits data into train (80%) and test sets (20%). """
+    try:
+        training_emails, testing_emails = train_test_split(dataframe, test_size=.2, train_size=.8, shuffle=True)
+        return training_emails, testing_emails
+    except Exception as e:
+        logging.error(f'Failed to split data into train and test. {e}')
+        exit()
 
 
 def write_pickle_file(what_to_pickle, input_filepath, output_filename, s3):
+    """ Writes input data to a pickle file to local computer or to S3. """
     if s3:
         bucket = 'pujaa-rajan-enron-email-data'
         key = f'model_input_data/{output_filename}'
@@ -52,17 +54,21 @@ def write_pickle_file(what_to_pickle, input_filepath, output_filename, s3):
         with open(f'{input_filepath}/{output_filename}', 'wb') as picklefile:
             pickle.dump(what_to_pickle, picklefile)
 
+
 def read_pickle_file(path):
+    """ Reads pickle file from S3. """
     s3 = boto3.resource('s3')
     bucket = 'pujaa-rajan-enron-email-data'
     with BytesIO() as data:
         s3.Bucket(bucket).download_fileobj(path, data)
-        data.seek(0)  # move back to the beginning after writing
+        data.seek(0)
         pickled_data = pickle.load(data)
     return pickled_data
 
 
 def create_blanks(sentence_row, answer_column):
+    """ Removes words and creates blanks to output test sentences for the language model to predict the word in the
+    blank. """
     remove_punctuation = sentence_row[:-1]
     word_index = randint(3, len(word_tokenize(remove_punctuation)) - 4)
     words_in_sentence = word_tokenize(remove_punctuation)
@@ -97,24 +103,25 @@ def create_test_data(dataframe, input_file_path):
 
 
 def merge_predictions(forward_predictions, backward_predictions):
+    """ Merge the predicted words from the forward and backward ngram model. """
     merged_predictions = forward_predictions + backward_predictions
     print(merged_predictions)
     return merged_predictions
 
 
 def predict_next_word(words_before_or_after_blank, bigram_probability, trigram_probability, direction):
+    """Predict the next word using the ngram model. """
     if direction == 'forward':
         logging.info('Predicting the next word using a FORWARD n gram model.')
-        look_up_unigram = words_before_or_after_blank[-1] # Start with word right before blank
-        look_up_bigram = words_before_or_after_blank[-2:] # Start with 2 words right before blank
+        look_up_unigram = words_before_or_after_blank[-1]  # Start with word right before blank
+        look_up_bigram = words_before_or_after_blank[-2:]  # Start with 2 words right before blank
     elif direction == 'backward':
         logging.info('Predicting the next word using a BACKWARD n gram model.')
         look_up_unigram = words_before_or_after_blank[0]  # Start with first word after blank
-        look_up_bigram = words_before_or_after_blank[:2] # Start with first two words after blank
+        look_up_bigram = words_before_or_after_blank[:2]  # Start with first two words after blank
 
     else:
         raise RuntimeError('Specify direction as forward or backward for ngram_probability function.')
-        # ? Is this the right error to raise?
     if look_up_unigram in bigram_probability:
         bigram_answers = bigram_probability[look_up_unigram]
         if tuple(look_up_bigram) in trigram_probability:
@@ -129,12 +136,13 @@ def predict_next_word(words_before_or_after_blank, bigram_probability, trigram_p
             sorted_probabilities = sorted(bigram_answers, key=lambda x: x[0], reverse=True)
             return sorted_probabilities[0:10]
     else:
-        return None # if the look up word is not in probability matrix
+        return None  # if the look up word is not in probability matrix
 
 
 def get_similar_words(word, word_vectors):
+    """ Get similar words using Gensim's word2vec embedding. """
     try:
-        result = word_vectors.similar_by_word(word, topn=10)
-        return result
+        similar_words = word_vectors.similar_by_word(word, topn=10)
+        return similar_words
     except KeyError:
         return None
