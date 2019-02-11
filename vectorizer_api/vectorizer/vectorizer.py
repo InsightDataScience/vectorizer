@@ -1,16 +1,12 @@
 from vectorizer import app
 from flask import Flask, request, jsonify
 # from flask_restful import Resource, Api
-from werkzeug.utils import secure_filename
 
 import spacy
 
 from vectorizer import clean
 from vectorizer import preprocess
 from vectorizer import embed
-
-UPLOAD_FOLDER = '/path/to/the/uploads'
-ALLOWED_EXTENSIONS = set(['csv'])
 
 @app.route('/embed', methods=['GET', 'POST'])
 def infer():
@@ -21,7 +17,7 @@ def infer():
     cleaned_text = clean.clean_str(text)
 
     # preprocessing
-    preprocessed_text = preprocess.inference_tokenize(cleaned_text)
+    preprocessed_text = preprocess.tokenize(cleaned_text)
 
     # embedding
     embedded_text = embed.inference_glove_embedding(preprocessed_text,
