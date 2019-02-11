@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import logging
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
