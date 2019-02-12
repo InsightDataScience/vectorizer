@@ -14,7 +14,7 @@ from keras.preprocessing.text import Tokenizer
 import matplotlib.pyplot as plt
 import os
 
-DATA_PATH = 'trainingandtestdata.csv'
+DATA_PATH = 'training.1600000.processed.noemoticon.csv'
 
 
 def load_data(path):
