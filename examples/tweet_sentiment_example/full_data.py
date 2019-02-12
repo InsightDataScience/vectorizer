@@ -44,7 +44,7 @@ def main():
 	print('calling vectorizer api{}'.format(dots))
 	matrix_embedding = np.zeros((len(dataset), 300))
 	for i in range(len(dataset)):
-		text = dataset['text'][i]
+		text = dataset[5][i]
 		input = {'text' : text}
 		response = requests.get('http://vectorizer.host/embed', data=input)
 		vector_embedding = json.loads(response.text)
