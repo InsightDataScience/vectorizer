@@ -18,7 +18,7 @@ def keras_model(embedding_size):
     # define model
     model = Sequential()
     model.add(Dense(50, input_shape=(embedding_size,)))
-    model.add(Dense(3, activation='softmax'))
+    model.add(Dense(2, activation='softmax'))
     # compile the model
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['acc'])
     # summarize the model
