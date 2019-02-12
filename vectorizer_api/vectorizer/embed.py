@@ -33,7 +33,7 @@ def inference_glove_embedding(preprocessed_text, averaged_embedding=True):
 			embedding_matrix[i] = embedding_vector
 
 	# using float to ensure accuracy
-	if averaged_embedding:
-		embedding_matrix = np.mean(embedding_matrix, axis=0, dtype=np.float64)
+	# if averaged_embedding:
+	embedding_matrix = np.mean(embedding_matrix, axis=0, dtype=np.float64)
 
 	return embedding_matrix
