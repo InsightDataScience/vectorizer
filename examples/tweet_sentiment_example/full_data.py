@@ -35,11 +35,6 @@ def main():
 	dataset = load_data(DATA_PATH)
 	labels = dataset[0]
 
-	train_text, test_text, train_labels, test_labels = train_test_split(dataset[5],
-	labels,
-	test_size=0.2,
-	random_state=40)
-
 	print('generating embeddings{}'.format(dots))
 	print('calling vectorizer api{}'.format(dots))
 	matrix_embedding = np.zeros((len(dataset), 300))
@@ -48,6 +43,7 @@ def main():
 		input = {'text' : text}
 		response = requests.get('http://vectorizer.host/embed', data=input)
 		vector_embedding = json.loads(response.text)[0]
+		vector_embedding = np.mean(vector_embedding, axis=0)
 		matrix_embedding[i] = vector_embedding
 
 	embedding_size = matrix_embedding.shape[1]
@@ -56,7 +52,7 @@ def main():
 	print('initializing model{}'.format(dots))
 	model = models.keras_model(embedding_size)
 
-	categorical_labels = to_categorical(labels, num_classes=3)
+	categorical_labels = to_categorical(labels, num_classes=2)
 
 	print('train test split')
 	X_train, X_test, y_train, y_test = train_test_split(matrix_embedding,
