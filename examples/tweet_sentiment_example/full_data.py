@@ -18,7 +18,7 @@ DATA_PATH = 'training.1600000.processed.noemoticon.csv'
 
 
 def load_data(path):
-	dataset = pd.read_csv(path, header=None)
+	dataset = pd.read_csv(path, header=None, encoding="ISO-8859-1")
 	renumber_labels =[]
 	for label in dataset[0]:
 		if label == 4:
