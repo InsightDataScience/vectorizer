@@ -35,6 +35,11 @@ def main():
 	dataset = load_data(DATA_PATH)
 	labels = dataset[0]
 
+	train_text, test_text, train_labels, test_labels = train_test_split(dataset.text,
+	labels.labels,
+	test_size=0.2,
+	random_state=40)
+	
 	print('generating embeddings{}'.format(dots))
 	print('calling vectorizer api{}'.format(dots))
 	matrix_embedding = np.zeros((len(dataset), 300))
