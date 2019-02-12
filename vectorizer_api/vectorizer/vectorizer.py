@@ -21,7 +21,7 @@ def infer():
 
     # embedding
     embedded_text = embed.inference_glove_embedding(preprocessed_text,
-        averaged_embedding)
+        averaged_embedding=True)
 
     # convert to list in order to jsonify
     embedded_text_list = embedded_text.tolist()

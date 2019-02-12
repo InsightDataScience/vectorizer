@@ -47,7 +47,7 @@ def main():
 		text = dataset[5][i]
 		input = {'text' : text}
 		response = requests.get('http://vectorizer.host/embed', data=input)
-		vector_embedding = json.loads(response.text[0])
+		vector_embedding = json.loads(response.text)[0]
 		matrix_embedding[i] = vector_embedding
 
 	embedding_size = matrix_embedding.shape[1]
