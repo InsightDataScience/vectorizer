@@ -18,5 +18,5 @@ def remove_stop_words(tokens):
 
 def lemmatize_words(tokens):
 	lmtzr = WordNetLemmatizer()
-	lemmatized = [lmtzer.lemmatize(token) for token in tokens]
+	lemmatized = [lmtzr.lemmatize(token) for token in tokens]
 	return lemmatized
