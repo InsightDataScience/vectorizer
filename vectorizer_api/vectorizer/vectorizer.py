@@ -18,7 +18,7 @@ def infer():
     # preprocessing
     tokenized_text = preprocess.tokenize(cleaned_text)
     removed_stop_words = preprocess.remove_stop_words(tokenized_text)
-    preprocessed_text = preprocess.lemmatize(removed_stop_words)
+    preprocessed_text = preprocess.lemmatize_words(removed_stop_words)
 
     # embedding
     embedded_text = embed.inference_glove_embedding(preprocessed_text,
