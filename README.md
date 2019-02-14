@@ -30,7 +30,7 @@ import json
 
 input = {'text': 'iput_text'}
 response = requests.get('http://vectorizer.host/embed', data=input)
-vector = json.loadas(response.text)
+vector = json.loads(response.text)
 ```
 
 ## Sample applications
