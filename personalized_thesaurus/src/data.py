@@ -57,13 +57,17 @@ def write_pickle_file(what_to_pickle, input_filepath, output_filename, s3):
 
 def read_pickle_file(path):
     """ Reads pickle file from S3. """
-    s3 = boto3.resource('s3')
-    bucket = 'pujaa-rajan-enron-email-data'
-    with BytesIO() as data:
-        s3.Bucket(bucket).download_fileobj(path, data)
-        data.seek(0)
-        pickled_data = pickle.load(data)
-    return pickled_data
+    try:
+        s3 = boto3.resource('s3')
+        bucket = 'pujaa-rajan-enron-email-data'
+        with BytesIO() as data:
+            s3.Bucket(bucket).download_fileobj(path, data)
+            data.seek(0)
+            pickled_data = pickle.load(data)
+        return pickled_data
+    except Exception:
+        raise Exception('Failed to read in pickle file.')
+        exit()
 
 
 def create_blanks(sentence_row, answer_column):
@@ -146,3 +150,8 @@ def get_similar_words(word, word_vectors):
         return similar_words
     except KeyError:
         return None
+
+
+def get_contextual_words_genism(words, word_vectors):
+    return word_vectors.predict_output_word(words,  topn=10)
+

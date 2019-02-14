@@ -16,7 +16,7 @@ import evaluation_statistics
 from ngram_test import NgramTest
 from sklearn.model_selection import train_test_split
 import gensim.downloader as api
-
+from gensim.models import KeyedVectors
 
 __author__ = "Pujaa Rajan"
 __email__ = "pujaa.rajan@gmail.com"
@@ -33,6 +33,7 @@ __email__ = "pujaa.rajan@gmail.com"
 def main(output_file_path, input_file_path, create_train_test_data, training_data_file_path, testing_data_file_path, run_ngram_train, run_ngram_test,  cli):
     """ Main function
     """
+
     utilities.logger()
     log = logging.getLogger('Enron_email_analysis.main')
     log.info('Starting to run main.py.')
@@ -62,10 +63,11 @@ def main(output_file_path, input_file_path, create_train_test_data, training_dat
         log.info("Starting to test ngram model")
         test_fill_in_the_blank = pd.read_csv(testing_data_file_path)
         ngram_test = NgramTest(test_fill_in_the_blank, output_file_path)
-        evaluation_statistics.Evaluation(ngram_test, output_file_path)
+        evaluation_statistics.Evaluation(ngram_test)
         log.info("Successfully finished testing ngram model")
 
     if cli:
+
         log.info("Welcome to the Personalized Thesaurus.")
         log.info("ABOUT: This thesaurus recommends you the best word based on your previous emails and the"
                  "\nmost similar word.")
@@ -84,7 +86,6 @@ def main(output_file_path, input_file_path, create_train_test_data, training_dat
 
         while True:
             log.info('Ready for user input')
-
             before_blank_tokens, after_blank_tokens, word_to_replace = utilities.take_input('cli')
             log.info(f'Before the word to replace: {before_blank_tokens}')
             log.info(f'After the word to replace: {after_blank_tokens}')
@@ -92,14 +93,12 @@ def main(output_file_path, input_file_path, create_train_test_data, training_dat
             before_predictions = data.predict_next_word(after_blank_tokens, bigram_backward_probability, trigram_backward_probability, 'backward')
             merged_predictions = after_predictions+before_predictions
             word_embedding_output = data.get_similar_words(word_to_replace, word_vectors)
-            log.info('---------------------------------------------------\nOUTPUT\n---------------------------------------------')
             print(f'Personalized Output:')
             for probability, word in merged_predictions:
                 print(word + '\t' + str(probability))
             print(f'Similar Words:')
             for word, probability  in word_embedding_output:
                 print(word + '\t' + str(probability))
-
 
     end = time()
     time_difference = end - start
@@ -109,5 +108,4 @@ def main(output_file_path, input_file_path, create_train_test_data, training_dat
 
 
 if __name__ == "__main__":
-    logging.info('Going to run main function.')
     main()
