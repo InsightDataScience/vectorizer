@@ -77,7 +77,7 @@ def main():
 	accuracy, precision, recall, f1 = evaluate.get_metrics(test_labels, y_predicted)
 
 	with open("metrics_output.txt", "w") as text_file:
-    	print('accuracy: {} precision: {} recall: {} f1: {}'
+		print('accuracy: {} precision: {} recall: {} f1: {}'
 			.format(accuracy, precision, recall, f1), file=text_file)
 
 	print('plotting confusion matrix{}'.format(dots))
