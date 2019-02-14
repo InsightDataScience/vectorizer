@@ -10,7 +10,7 @@ def tokenize(text):
 	return tokenized_text
 
 def remove_stop_words(tokens):
-    no_stopwords = [token for token in tokens not in nltk_stopwords]
+    no_stopwords = [token for token in tokens not in NLTK_STOPWORDS]
     return no_stopwords
 
 def lemmatize_words(tokens):
