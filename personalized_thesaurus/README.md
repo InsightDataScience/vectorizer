@@ -1,39 +1,73 @@
 # Personalized Thesaurus
 
-##
+## About
 
-STEP 1. git clone https://github.com/InsightDataCommunity/vectorizer.git
+Personalized Thesaurus suggests a word for you in the middle of a sentence using phrases you've used in the past and the context of the surrounding words. 
 
-STEP 2. cd into folder
+## Set Up
 
-STEP 3. python3 -m pip install --user virtualenv
+**STEP 1.** Clone this Github repository.
 
-STEP 4. source env/bin/activate
+`git clone https://github.com/InsightDataCommunity/vectorizer.git`
 
-STEP 5. pip install -r requirements.txt 
+**STEP 2.** `cd vectorizer/`
 
-INSERT PICTURE OF TERMINAL HERE
+**STEP 3.** Install a Python virtual environment.
 
+`python3 -m pip install --user virtualenv`
 
-##Commands
+**STEP 4.** Activate the virtual environment.
 
-### How to run locally
+`source env/bin/activate`
 
-python3 nlp_fib/src/main.py --input_file_path nlp_fib/input --create_train_test_data input/enron_sample_1000.csv --output_file_path /output
+**STEP 5.** Install dependencies.
 
-python nlp_fib/src/main.py  --output_file_path nlp_fib/output --run_ngram_train --training_data_file_path input/training_email_data.csv 
+`pip install -r requirements.txt`
 
-python nlp_fib/src/main.py  --output_file_path nlp_fib/output --run_ngram_test --testing_data_file_path input/test_fill_in_the_blank.csv 
+**STEP 6.** Change to project folder.
 
-### How to run on AWS
+`cd personalized_thesaurus/`
 
-ssh -i aws_key.pem ubuntu@ec2-54-214-100-221.us-west-2.compute.amazonaws.com
-### Create data set
-python3 src/main.py --create_train_test_data s3://pujaa-rajan-enron-email-data/raw_email_data/enron_sample_1k.csv --output_file_path s3://pujaa-rajan-enron-email-data/model_output_data --input_file_path  s3://pujaa-rajan-enron-email-data/model_input_data
-### Training model
-python3 src/main.py  --input_file_path s3://pujaa-rajan-enron-email-data/model_input_data --run_ngram_train --training_data_file_path s3://pujaa-rajan-enron-email-data/model_input_data/training_email_data.csv
-### Testing model
-python3 src/main.py  --output_file_path s3://pujaa-rajan-enron-email-data/model_output_data --run_ngram_test --testing_data_file_path s3://pujaa-rajan-enron-email-data/model_input_data/testing_email_data.csv 
+## How to Run 
 
-###CLI
-python3 nlp_fib/src/main.py  --input_file_path s3://pujaa-rajan-enron-email-data/model_input_data --cli
+**STEP 1.** Create the input and output datasets.
+
+`python3 src/main.py --input_file_path input/ --create_train_test_data input/enron_sample_1000.csv --output_file_path /output`
+
+**STEP 2.** Train the model.
+
+`python3 src/main.py  --output_file_path output/ --run_ngram_train --training_data_file_path input/training_email_data.csv`
+
+**STEP 3.** Test the model. (OPTIONAL)
+
+`python3 src/main.py  --output_file_path output/ --run_ngram_test --testing_data_file_path input/test_fill_in_the_blank.csv`
+
+**STEP 4.** Play with the application.
+
+`python src/flask_app.py`
+
+### How to run on AWS using S3
+
+**STEP 1.** Ssh into your EC2 instance. Note: I used a p2.xlarge. Replace words in brackets with your information.
+
+`ssh -i aws_key.pem ubuntu@[INSTANCE_ID].[REGION].compute.amazonaws.com`
+
+**STEP 2.** Follow "Set Up" Steps.
+
+**STEP 3.** Follow "How to Run" steps. Use S3 for data. Here are example commands:
+
+Create data set:
+`python3 src/main.py --create_train_test_data s3://pujaa-rajan-enron-email-data/raw_email_data/enron_sample_1k.csv --output_file_path s3://pujaa-rajan-enron-email-data/model_output_data --input_file_path  s3://pujaa-rajan-enron-email-data/model_input_data`
+
+Train:
+`python3 src/main.py  --input_file_path s3://pujaa-rajan-enron-email-data/model_input_data --run_ngram_train --training_data_file_path s3://pujaa-rajan-enron-email-data/model_input_data/training_email_data.csv`
+
+Test:
+`python3 src/main.py  --output_file_path s3://pujaa-rajan-enron-email-data/model_output_data --run_ngram_test --testing_data_file_path s3://pujaa-rajan-enron-email-data/model_input_data/testing_email_data.csv`
+
+Command line:
+`python3 nlp_fib/src/main.py  --input_file_path s3://pujaa-rajan-enron-email-data/model_input_data --cli`
+
+# Questions
+
+Feel free to contact me at pujaa.rajan@gmail.comw with any questions, comments, or concerns.
