@@ -71,6 +71,7 @@ def main():
 	print('fitting model{}'.format(dots))
 	csv_logger = CSVLogger('log.csv', append=True, separator=';')
 	model.fit(X_train, y_train, epochs=5, callbacks=[csv_logger])
+	model.save('full_data_epoch5.h5')
 
 	# evaluate model
 	print('generating predictions{}'.format(dots))
