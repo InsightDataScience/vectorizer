@@ -10,11 +10,11 @@ def tokenize(text):
 	return tokenized_text
 
 def remove_stop_words(tokens):
-    no_stopwords = []
+	no_stopwords = []
 	for token in tokens:
 		if token not in NLTK_STOPWORDS:
 			no_stopwords.append(token)
-    return no_stopwords
+	return no_stopwords
 
 def lemmatize_words(tokens):
 	lmtzr = WordNetLemmatizer()
