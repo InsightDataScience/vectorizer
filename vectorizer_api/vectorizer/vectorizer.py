@@ -1,16 +1,11 @@
 from vectorizer import app
-from flask import Flask, flash, request, redirect, url_for, jsonify
-from flask_restful import Resource, Api
-from werkzeug.utils import secure_filename
+from flask import Flask, request, jsonify
 
 import spacy
 
 from vectorizer import clean
 from vectorizer import preprocess
 from vectorizer import embed
-
-UPLOAD_FOLDER = '/path/to/the/uploads'
-ALLOWED_EXTENSIONS = set(['csv'])
 
 @app.route('/embed', methods=['GET', 'POST'])
 def infer():
@@ -21,30 +16,17 @@ def infer():
     cleaned_text = clean.clean_str(text)
 
     # preprocessing
-    preprocessed_text = preprocess.inference_tokenize(cleaned_text)
+    tokenized_text = preprocess.tokenize(cleaned_text)
+    removed_stop_words = preprocess.remove_stop_words(tokenized_text)
+    preprocessed_text = preprocess.lemmatize_words(removed_stop_words)
 
     # embedding
     embedded_text = embed.inference_glove_embedding(preprocessed_text,
-        averaged_embedding)
+        averaged_embedding=True)
 
     # convert to list in order to jsonify
     embedded_text_list = embedded_text.tolist()
     return jsonify(embedded_text_list)
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@app.route('/train', methods=['GET', 'POST'])
-def train():
-    if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-    print(type(file))
-    return 'file upload successful'
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -12,19 +12,3 @@ def clean_str(string):
     string = re.sub(r"\s{2,}", " ", string) # removes consecutive white spaces
 
     return string.strip().lower()
-
-def remove_URL(string):
-	string = string.replace(r"http\S+", "")
-	string = string.replace(r"http", "")
-	return string
-
-def remove_special_characters(string):
-	# string = string.replace(r"@\S+", "")
-	string = string.replace(r"[^A-Za-z0-9 ]+", "")
-	# string = string.replace(r"[^A-Za-z0-9(),!?@\'\`\"\_\n]", " ")
-	# string = string.replace(r"@", "at")
-	return string
-
-def lowercase(string):
-	string = string.lower()
-	return string

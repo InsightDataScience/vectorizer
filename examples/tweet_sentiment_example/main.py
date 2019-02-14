@@ -49,7 +49,7 @@ def main():
 	for i in range(len(dataset)):
 		text = dataset['text'][i]
 		input = {'text' : text}
-		response = requests.get('http://0.0.0.0:5000/embed', data=input)
+		response = requests.get('http://vectorizer.host/embed', data=input)
 		vector_embedding = json.loads(response.text)
 		matrix_embedding[i] = vector_embedding
 

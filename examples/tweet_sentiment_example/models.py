@@ -17,8 +17,8 @@ def keras_model(embedding_size):
     # 1/27/19 Adapted from https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
     # define model
     model = Sequential()
-    model.add(Dense(50, input_shape=(embedding_size,)))
-    model.add(Dense(3, activation='softmax'))
+    model.add(Dense(100, input_shape=(embedding_size,)))
+    model.add(Dense(2, activation='softmax'))
     # compile the model
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['acc'])
     # summarize the model
