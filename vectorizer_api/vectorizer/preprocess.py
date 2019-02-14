@@ -2,6 +2,8 @@ from nltk.tokenize import RegexpTokenizer
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import stopwords
 
+NLTK_STOPWORDS = stopwords.words('english')
+
 def tokenize(text):
 	tokenizer = RegexpTokenizer(r'\w+')
 	tokenized_text = tokenizer.tokenize(text)
