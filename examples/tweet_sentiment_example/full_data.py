@@ -9,6 +9,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 from keras.utils import to_categorical
+from keras.callbacks import CSVLogger
 
 import matplotlib.pyplot as plt
 import os
@@ -68,7 +69,8 @@ def main():
 
 	# fit model
 	print('fitting model{}'.format(dots))
-	model.fit(X_train, y_train, epochs=5, verbose=0)
+	csv_logger = CSVLogger('log.csv', append=True, separator=';')
+	model.fit(X_train, y_train, epochs=5, callbacks=[csv_logger])
 
 	# evaluate model
 	print('generating predictions{}'.format(dots))
