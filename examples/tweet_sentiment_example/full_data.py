@@ -25,7 +25,7 @@ def load_data(path):
 		else:
 			renumbered_labels.append(0)
 
-	dataset[0] = renumber_labels
+	dataset[0] = renumbered_labels
 	return dataset
 
 def main():
